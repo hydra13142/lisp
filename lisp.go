@@ -1176,6 +1176,23 @@ func init() {
 		}
 		return None, ErrFitType
 	})
+	Global.Add("%", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 2 {
+			return None, ErrParaNum
+		}
+		x, err := p.Exec(t[0])
+		if err != nil {
+			return None, err
+		}
+		y, err := p.Exec(t[1])
+		if err != nil {
+			return None, err
+		}
+		if x.Kind == Int && y.Kind == Int {
+			return Token{Int, x.Text.(int64) % y.Text.(int64)}, nil
+		}
+		return None, ErrFitType
+	})
 	Global.Add(">", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum

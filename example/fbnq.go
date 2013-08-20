@@ -64,9 +64,12 @@ func main() {
 							s
 						)
 						(1
-							(+
-								(sort (below (car s) s '()))
-								(sort (above (car s) s '()))
+							(each
+								(define n (car s))
+								(+
+									(sort (below n (cdr s) '()))
+									(cons n (sort (above n (cdr s) '())))
+								)
 							)
 						)
 					)
