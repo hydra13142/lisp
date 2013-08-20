@@ -28,6 +28,7 @@ type pres func([]Token, *Lisp) (Token, error)
 type afts struct {
 	Para []name
 	Text []Token
+	Make map[name]Token
 }
 
 type Token struct {
@@ -610,6 +611,9 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 			if len(ls) != len(lp.Para)+1 {
 				return None, ErrParaNum
 			}
+			for m, n := range lp.Make {
+				q.env[m] = n
+			}
 			for i, t := range ls[1:] {
 				q.env[lp.Para[i]], err = l.Exec(t)
 				if err != nil {
@@ -699,7 +703,8 @@ func (l *Lisp) Extend() {
 		if x.Kind != Front {
 			return None, ErrFitType
 		}
-		n := x.Text.(afts).Para
+		f := x.Text.(afts)
+		n := f.Para
 		if len(n)+1 != len(t) {
 			return None, ErrParaNum
 		}
@@ -715,6 +720,9 @@ func (l *Lisp) Extend() {
 			q := &Lisp{dad: p2, env: map[name]Token{}}
 			if len(t2) > len(n) {
 				return None, ErrParaNum
+			}
+			for m, n := range f.Make {
+				q.env[m] = n
 			}
 			var i int
 			for i, z = range t2 {
@@ -746,11 +754,15 @@ func (l *Lisp) Extend() {
 		if x.Kind != Front {
 			return None, ErrFitType
 		}
-		n := x.Text.(afts).Para
+		f := x.Text.(afts)
+		n := f.Para
 		return Token{Back, pres(func(t2 []Token, p2 *Lisp) (Token, error) {
 			q := &Lisp{dad: p2, env: map[name]Token{}}
 			if len(t2) < len(n)-1 {
 				return None, ErrParaNum
+			}
+			for m, n := range f.Make {
+				q.env[m] = n
 			}
 			var i int
 			for i = len(n) - 2; i >= 0; i-- {
@@ -1009,7 +1021,11 @@ func init() {
 			}
 			x = append(x, i.Text.(name))
 		}
-		return Token{Front, afts{x, b.Text.([]Token)}}, nil
+		u := make(map[name]Token)
+		for i, j := range p.env {
+			u[i] = j
+		}
+		return Token{Front, afts{x, b.Text.([]Token), u}}, nil
 	})
 	Global.Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
@@ -1035,7 +1051,11 @@ func init() {
 				}
 				x = append(x, i.Text.(name))
 			}
-			ans = Token{Front, afts{x[1:], b.Text.([]Token)}}
+			u := make(map[name]Token)
+			for i, j := range p.env {
+				u[i] = j
+			}
+			ans = Token{Front, afts{x[1:], b.Text.([]Token), u}}
 			p.env[x[0]] = ans
 			return ans, nil
 		}
