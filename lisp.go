@@ -858,7 +858,7 @@ func init() {
 		}
 		return t[0], nil
 	})
-	Global.Add("run", func(t []Token, p *Lisp) (ans Token, err error) {
+	Global.Add("eval", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
