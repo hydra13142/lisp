@@ -17,7 +17,7 @@ type Scanner struct {
 	skp bool
 }
 
-type kind int
+type Kind int
 
 type null struct{}
 
@@ -26,13 +26,13 @@ type name string
 type pres func([]Token, *Lisp) (Token, error)
 
 type afts struct {
-	para []name
-	text []Token
+	Para []name
+	Text []Token
 }
 
 type Token struct {
-	kind
-	text interface{}
+	Kind
+	Text interface{}
 }
 
 type Lisp struct {
@@ -41,7 +41,7 @@ type Lisp struct {
 }
 
 const (
-	Null kind = iota
+	Null Kind = iota
 	Int
 	Float
 	String
@@ -294,9 +294,9 @@ func Tree(tkn []Token) ([]Token, error) {
 	if len(tkn) == 0 {
 		return nil, nil
 	}
-	if tkn[0].kind == Operator {
+	if tkn[0].Kind == Operator {
 		var t bool
-		switch tkn[0].text.(byte) {
+		switch tkn[0].Text.(byte) {
 		case '(':
 			t = true
 		case '[':
@@ -306,8 +306,8 @@ func Tree(tkn []Token) ([]Token, error) {
 		}
 		i, j, l := 1, 1, len(tkn)
 		for i < l && j > 0 {
-			if tkn[i].kind == Operator {
-				switch tkn[i].text.(byte) {
+			if tkn[i].Kind == Operator {
+				switch tkn[i].Text.(byte) {
 				case '(', '[':
 					j++
 				case ')':
@@ -322,9 +322,9 @@ func Tree(tkn []Token) ([]Token, error) {
 				return nil, err
 			}
 			if t {
-				f = Token{text: fold, kind: List}
+				f = Token{Text: fold, Kind: List}
 			} else {
-				f = Token{text: fold, kind: Fold}
+				f = Token{Text: fold, Kind: Fold}
 			}
 			s = i
 		} else {
@@ -395,7 +395,7 @@ func (s *Scanner) Over() bool {
 	return len(s.tkn) == 0
 }
 
-func (t kind) String() string {
+func (t Kind) String() string {
 	switch t {
 	case Null:
 		return "null"
@@ -422,23 +422,23 @@ func (t kind) String() string {
 }
 
 func (l afts) String() string {
-	return fmt.Sprintf("{front : (%v,%v)}", l.para, l.text)
+	return fmt.Sprintf("{front : (%v,%v)}", l.Para, l.Text)
 }
 
 func (t Token) String() string {
-	return fmt.Sprint(t.text)
+	return fmt.Sprint(t.Text)
 }
 
 func (t *Token) Bool() bool {
-	switch t.kind {
+	switch t.Kind {
 	case Int:
-		return t.text.(int64) != 0
+		return t.Text.(int64) != 0
 	case Float:
-		return t.text.(float64) != 0
+		return t.Text.(float64) != 0
 	case String:
-		return t.text.(string) != ""
+		return t.Text.(string) != ""
 	case List:
-		return len(t.text.([]Token)) != 0
+		return len(t.Text.([]Token)) != 0
 	case Null:
 		return false
 	}
@@ -446,18 +446,18 @@ func (t *Token) Bool() bool {
 }
 
 func (t *Token) Eq(p *Token) bool {
-	if t.kind != p.kind {
+	if t.Kind != p.Kind {
 		return false
 	}
-	switch t.kind {
+	switch t.Kind {
 	case Int:
-		return t.text.(int64) == p.text.(int64)
+		return t.Text.(int64) == p.Text.(int64)
 	case Float:
-		return t.text.(float64) == p.text.(float64)
+		return t.Text.(float64) == p.Text.(float64)
 	case String:
-		return t.text.(string) == p.text.(string)
+		return t.Text.(string) == p.Text.(string)
 	case Fold, List:
-		a, b := t.text.([]Token), p.text.([]Token)
+		a, b := t.Text.([]Token), p.Text.([]Token)
 		m, n := len(a), len(b)
 		for i := 0; i < m && i < n; i++ {
 			j := a[i].Eq(&b[i])
@@ -473,45 +473,45 @@ func (t *Token) Eq(p *Token) bool {
 
 func (t *Token) Cmp(p *Token) int {
 	var a, b bool
-	switch t.kind {
+	switch t.Kind {
 	case Int:
-		switch p.kind {
+		switch p.Kind {
 		case Int:
-			a = t.text.(int64) > p.text.(int64)
-			b = t.text.(int64) < p.text.(int64)
+			a = t.Text.(int64) > p.Text.(int64)
+			b = t.Text.(int64) < p.Text.(int64)
 		case Float:
-			a = float64(t.text.(int64)) > p.text.(float64)
-			b = float64(t.text.(int64)) < p.text.(float64)
+			a = float64(t.Text.(int64)) > p.Text.(float64)
+			b = float64(t.Text.(int64)) < p.Text.(float64)
 		default:
 			return 0
 		}
 	case Float:
-		switch p.kind {
+		switch p.Kind {
 		case Int:
-			a = t.text.(float64) > float64(p.text.(int64))
-			b = t.text.(float64) < float64(p.text.(int64))
+			a = t.Text.(float64) > float64(p.Text.(int64))
+			b = t.Text.(float64) < float64(p.Text.(int64))
 		case Float:
-			a = t.text.(float64) > p.text.(float64)
-			b = t.text.(float64) < p.text.(float64)
+			a = t.Text.(float64) > p.Text.(float64)
+			b = t.Text.(float64) < p.Text.(float64)
 		default:
 			return 0
 		}
 	case String:
-		switch p.kind {
+		switch p.Kind {
 		case Int, Float:
 			return 1
 		case String:
-			a = t.text.(string) > p.text.(string)
-			b = t.text.(string) < p.text.(string)
+			a = t.Text.(string) > p.Text.(string)
+			b = t.Text.(string) < p.Text.(string)
 		default:
 			return 0
 		}
 	case List:
-		switch p.kind {
+		switch p.Kind {
 		case Int, Float, String:
 			return 1
 		case List:
-			x, y := t.text.([]Token), p.text.([]Token)
+			x, y := t.Text.([]Token), p.Text.([]Token)
 			m, n := len(x), len(y)
 			for i := 0; i < m && i < n; i++ {
 				j := x[i].Cmp(&y[i])
@@ -556,12 +556,12 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 		ct Token
 		ok bool
 	)
-	switch f.kind {
+	switch f.Kind {
 	case Fold:
-		return Token{List, f.text.([]Token)}, nil
+		return Token{List, f.Text.([]Token)}, nil
 	case Name:
 		for v := l; ; {
-			ct, ok = v.env[f.text.(name)]
+			ct, ok = v.env[f.Text.(name)]
 			if ok {
 				break
 			}
@@ -575,15 +575,15 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 		}
 		return ct, nil
 	case List:
-		ls = f.text.([]Token)
+		ls = f.Text.([]Token)
 		if len(ls) == 0 {
 			return None, nil
 		}
 		ct = ls[0]
-		switch ct.kind {
+		switch ct.Kind {
 		case Name:
 			for v := l; ; {
-				ct, ok = v.env[ls[0].text.(name)]
+				ct, ok = v.env[ls[0].Text.(name)]
 				if ok {
 					break
 				}
@@ -601,22 +601,22 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 				return None, err
 			}
 		}
-		switch ct.kind {
+		switch ct.Kind {
 		case Back:
-			return ct.text.(pres)(ls[1:], l)
+			return ct.Text.(pres)(ls[1:], l)
 		case Front:
-			lp := ct.text.(afts)
+			lp := ct.Text.(afts)
 			q := &Lisp{dad: l, env: map[name]Token{}}
-			if len(ls) != len(lp.para)+1 {
+			if len(ls) != len(lp.Para)+1 {
 				return None, ErrParaNum
 			}
 			for i, t := range ls[1:] {
-				q.env[lp.para[i]], err = l.Exec(t)
+				q.env[lp.Para[i]], err = l.Exec(t)
 				if err != nil {
 					return None, err
 				}
 			}
-			return q.Exec(Token{text: lp.text, kind: List})
+			return q.Exec(Token{Text: lp.Text, Kind: List})
 		default:
 			return None, ErrNotFunc
 		}
@@ -689,17 +689,17 @@ func (l *Lisp) Extend() {
 	l.Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var x, y, z Token
 		var err error
-		if t[0].kind != Name {
+		if t[0].Kind != Name {
 			return None, ErrFitType
 		}
 		x, err = p.Exec(t[0])
 		if err != nil {
 			return None, err
 		}
-		if x.kind != Front {
+		if x.Kind != Front {
 			return None, ErrFitType
 		}
-		n := x.text.(afts).para
+		n := x.Text.(afts).Para
 		if len(n)+1 != len(t) {
 			return None, ErrParaNum
 		}
@@ -727,7 +727,7 @@ func (l *Lisp) Extend() {
 			for i = len(t2); i < len(n); i++ {
 				q.env[n[i]] = hold[i]
 			}
-			return q.Exec(Token{List, x.text.(afts).text})
+			return q.Exec(Token{List, x.Text.(afts).Text})
 		})}, nil
 	})
 	l.Add("omission", func(t []Token, p *Lisp) (Token, error) {
@@ -736,17 +736,17 @@ func (l *Lisp) Extend() {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		if t[0].kind != Name {
+		if t[0].Kind != Name {
 			return None, ErrFitType
 		}
 		x, err = p.Exec(t[0])
 		if err != nil {
 			return None, err
 		}
-		if x.kind != Front {
+		if x.Kind != Front {
 			return None, ErrFitType
 		}
-		n := x.text.(afts).para
+		n := x.Text.(afts).Para
 		return Token{Back, pres(func(t2 []Token, p2 *Lisp) (Token, error) {
 			q := &Lisp{dad: p2, env: map[name]Token{}}
 			if len(t2) < len(n)-1 {
@@ -769,7 +769,7 @@ func (l *Lisp) Extend() {
 				z = append(z, y)
 			}
 			q.env[n[len(n)-1]] = Token{List, z}
-			return q.Exec(Token{List, x.text.(afts).text})
+			return q.Exec(Token{List, x.Text.(afts).Text})
 		})}, nil
 	})
 	l.Add("print", func(t []Token, p *Lisp) (Token, error) {
@@ -853,7 +853,7 @@ func init() {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		if t[0].kind == Name {
+		if t[0].Kind == Name {
 			return p.Exec(t[0])
 		}
 		return t[0], nil
@@ -863,7 +863,7 @@ func init() {
 			return None, ErrParaNum
 		}
 		ans = t[0]
-		if ans.kind == Name {
+		if ans.Kind == Name {
 			ans, err = p.Exec(ans)
 			if err != nil {
 				return None, err
@@ -879,7 +879,7 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		if x.kind != List || len(x.text.([]Token)) == 0 {
+		if x.Kind != List || len(x.Text.([]Token)) == 0 {
 			return True, nil
 		} else {
 			return None, nil
@@ -911,9 +911,9 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		if x.kind == List {
-			if len(x.text.([]Token)) != 0 {
-				return x.text.([]Token)[0], nil
+		if x.Kind == List {
+			if len(x.Text.([]Token)) != 0 {
+				return x.Text.([]Token)[0], nil
 			}
 			return None, ErrIsEmpty
 		}
@@ -927,9 +927,9 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		if x.kind == List {
-			if len(x.text.([]Token)) != 0 {
-				return Token{List, x.text.([]Token)[1:]}, nil
+		if x.Kind == List {
+			if len(x.Text.([]Token)) != 0 {
+				return Token{List, x.Text.([]Token)[1:]}, nil
 			}
 			return None, ErrIsEmpty
 		}
@@ -947,8 +947,8 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		if y.kind == List {
-			a := y.text.([]Token)
+		if y.Kind == List {
+			a := y.Text.([]Token)
 			b := make([]Token, len(a)+1)
 			b[0] = x
 			copy(b[1:], a)
@@ -961,8 +961,8 @@ func init() {
 			return None, ErrParaNum
 		}
 		for _, i := range t {
-			if i.kind == List {
-				t := i.text.([]Token)
+			if i.Kind == List {
+				t := i.Text.([]Token)
 				if len(t) == 2 {
 					ans, err = p.Exec(t[0])
 					if err != nil {
@@ -995,47 +995,47 @@ func init() {
 			return None, ErrParaNum
 		}
 		a, b := t[0], t[1]
-		if a.kind != List {
+		if a.Kind != List {
 			return None, ErrFitType
 		}
-		if b.kind != List {
+		if b.Kind != List {
 			return None, ErrFitType
 		}
-		t = a.text.([]Token)
+		t = a.Text.([]Token)
 		x := make([]name, 0, len(t))
 		for _, i := range t {
-			if i.kind != Name {
+			if i.Kind != Name {
 				return None, ErrNotName
 			}
-			x = append(x, i.text.(name))
+			x = append(x, i.Text.(name))
 		}
-		return Token{Front, afts{x, b.text.([]Token)}}, nil
+		return Token{Front, afts{x, b.Text.([]Token)}}, nil
 	})
 	Global.Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
 		a, b := t[0], t[1]
-		switch a.kind {
+		switch a.Kind {
 		case Name:
 			ans, err = p.Exec(b)
 			if err == nil {
-				p.env[a.text.(name)] = ans
+				p.env[a.Text.(name)] = ans
 			}
 			return ans, err
 		case List:
-			if b.kind != List {
+			if b.Kind != List {
 				return None, ErrFitType
 			}
-			t = a.text.([]Token)
+			t = a.Text.([]Token)
 			x := make([]name, 0, len(t))
 			for _, i := range t {
-				if i.kind != Name {
+				if i.Kind != Name {
 					return None, ErrNotName
 				}
-				x = append(x, i.text.(name))
+				x = append(x, i.Text.(name))
 			}
-			ans = Token{Front, afts{x[1:], b.text.([]Token)}}
+			ans = Token{Front, afts{x[1:], b.Text.([]Token)}}
 			p.env[x[0]] = ans
 			return ans, nil
 		}
@@ -1053,30 +1053,30 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Int:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Int, x.text.(int64) + y.text.(int64)}, nil
+				return Token{Int, x.Text.(int64) + y.Text.(int64)}, nil
 			case Float:
-				return Token{Float, float64(x.text.(int64)) + y.text.(float64)}, nil
+				return Token{Float, float64(x.Text.(int64)) + y.Text.(float64)}, nil
 			}
 		case Float:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Float, x.text.(float64) + float64(y.text.(int64))}, nil
+				return Token{Float, x.Text.(float64) + float64(y.Text.(int64))}, nil
 			case Float:
-				return Token{Float, x.text.(float64) + y.text.(float64)}, nil
+				return Token{Float, x.Text.(float64) + y.Text.(float64)}, nil
 			}
 		case String:
-			switch y.kind {
+			switch y.Kind {
 			case String:
-				return Token{String, x.text.(string) + y.text.(string)}, nil
+				return Token{String, x.Text.(string) + y.Text.(string)}, nil
 			}
 		case List:
-			switch y.kind {
+			switch y.Kind {
 			case List:
-				a, b := x.text.([]Token), y.text.([]Token)
+				a, b := x.Text.([]Token), y.Text.([]Token)
 				c := make([]Token, len(a)+len(b))
 				copy(c, a)
 				copy(c[len(a):], b)
@@ -1098,20 +1098,20 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Int:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Int, x.text.(int64) - y.text.(int64)}, nil
+				return Token{Int, x.Text.(int64) - y.Text.(int64)}, nil
 			case Float:
-				return Token{Float, float64(x.text.(int64)) - y.text.(float64)}, nil
+				return Token{Float, float64(x.Text.(int64)) - y.Text.(float64)}, nil
 			}
 		case Float:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Float, x.text.(float64) - float64(y.text.(int64))}, nil
+				return Token{Float, x.Text.(float64) - float64(y.Text.(int64))}, nil
 			case Float:
-				return Token{Float, x.text.(float64) - y.text.(float64)}, nil
+				return Token{Float, x.Text.(float64) - y.Text.(float64)}, nil
 			}
 		}
 		return None, ErrFitType
@@ -1128,20 +1128,20 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Int:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Int, x.text.(int64) * y.text.(int64)}, nil
+				return Token{Int, x.Text.(int64) * y.Text.(int64)}, nil
 			case Float:
-				return Token{Float, float64(x.text.(int64)) * y.text.(float64)}, nil
+				return Token{Float, float64(x.Text.(int64)) * y.Text.(float64)}, nil
 			}
 		case Float:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Float, x.text.(float64) * float64(y.text.(int64))}, nil
+				return Token{Float, x.Text.(float64) * float64(y.Text.(int64))}, nil
 			case Float:
-				return Token{Float, x.text.(float64) * y.text.(float64)}, nil
+				return Token{Float, x.Text.(float64) * y.Text.(float64)}, nil
 			}
 		}
 		return None, ErrFitType
@@ -1158,20 +1158,20 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Int:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Int, x.text.(int64) / y.text.(int64)}, nil
+				return Token{Int, x.Text.(int64) / y.Text.(int64)}, nil
 			case Float:
-				return Token{Float, float64(x.text.(int64)) / y.text.(float64)}, nil
+				return Token{Float, float64(x.Text.(int64)) / y.Text.(float64)}, nil
 			}
 		case Float:
-			switch y.kind {
+			switch y.Kind {
 			case Int:
-				return Token{Float, x.text.(float64) / float64(y.text.(int64))}, nil
+				return Token{Float, x.Text.(float64) / float64(y.Text.(int64))}, nil
 			case Float:
-				return Token{Float, x.text.(float64) / y.text.(float64)}, nil
+				return Token{Float, x.Text.(float64) / y.Text.(float64)}, nil
 			}
 		}
 		return None, ErrFitType
@@ -1188,11 +1188,11 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Fold, Back, Front:
 			return None, ErrFitType
 		default:
-			switch y.kind {
+			switch y.Kind {
 			case List, Back, Front:
 				return None, ErrFitType
 			default:
@@ -1216,11 +1216,11 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Fold, Back, Front:
 			return None, ErrFitType
 		default:
-			switch y.kind {
+			switch y.Kind {
 			case Fold, Back, Front:
 				return None, ErrFitType
 			default:
@@ -1244,11 +1244,11 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Fold, Back, Front:
 			return None, ErrFitType
 		default:
-			switch y.kind {
+			switch y.Kind {
 			case Fold, Back, Front:
 				return None, ErrFitType
 			default:
@@ -1272,11 +1272,11 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Fold, Back, Front:
 			return None, ErrFitType
 		default:
-			switch y.kind {
+			switch y.Kind {
 			case Fold, Back, Front:
 				return None, ErrFitType
 			default:
@@ -1300,11 +1300,11 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Fold, Back, Front:
 			return None, ErrFitType
 		default:
-			switch y.kind {
+			switch y.Kind {
 			case Fold, Back, Front:
 				return None, ErrFitType
 			default:
@@ -1328,11 +1328,11 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.kind {
+		switch x.Kind {
 		case Fold, Back, Front:
 			return None, ErrFitType
 		default:
-			switch y.kind {
+			switch y.Kind {
 			case Fold, Back, Front:
 				return None, ErrFitType
 			default:
