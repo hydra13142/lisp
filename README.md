@@ -50,13 +50,13 @@ func (l *Lisp)Add(name string, func([]Token,*Lisp)(Token,error))
 
 Token为内部用来表示元素的类型
 
-type Token struct{
+	type Token struct{
 
-	Kind
-	
-	Text interface{}
-	
-}
+		Kind
+		
+		Text interface{}
+		
+	}
 
 Text只可能装入如下类型：[]Token、int64、float64、string
 
