@@ -34,6 +34,9 @@ func (l *Lisp) EX() {
 				break
 			}
 			b, err = p.Exec(t[2])
+			if err != nil {
+				return None, err
+			}
 		}
 		return b, err
 	})
@@ -41,11 +44,11 @@ func (l *Lisp) EX() {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		_, err := p.Exec(t[0])
+		ans, err := p.Exec(t[0])
 		if err != nil {
-			return None, nil
+			return Token{List, []Token{None, ans}}, nil
 		}
-		return True, nil
+		return Token{List, []Token{True, ans}}, nil
 	})
 	l.Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var x, y, z Token
