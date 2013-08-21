@@ -24,38 +24,39 @@ define 声明
 
 	(define (f x) (+ x 2)) 为声明一个函数f ：f(x)=x+2
 	
-	(define f (+ 2 1)) 为声明一个变量f : f=3
+	(define f (+ 2 1))     为声明一个变量f : f=3
 	
 eval 为将一个列表在当前作用域下执行
 
 each 为顺序执行多个语句，最后一个语句的返回值作为返回值
 
-可以通过Extend方法注入6个函数：
+可以通过EX方法注入4个函数：
 
-if 三个参数，根据第一个的结果决定执行第二个还是第三个
+	if 三个参数，根据第一个的结果决定执行第二个还是第三个
 
-loop 三个参数，第一个初始化，第二个判断，循环执行第三个，直到第二个判断为假
+	loop 三个参数，第一个初始化，第二个判断，循环执行第三个，直到第二个判断为假
 
-default 用于给函数绑定默认值，返回一个绑定了默认值（因而可以省略后面参数）的函数
+	default 用于给函数绑定默认值，返回一个绑定了默认值（因而可以省略后面参数）的函数
 
-omission 用于产生一个可变参数函数，提供的参数必须是一个函数，该函数的最后一个参数应该为列表
+	omission 用于产生一个可变参数函数，提供的参数必须是一个函数，该函数的最后一个参数应该为列表
 
-print 输出数据
+可以通过IO方法注入3个函数
 
-println 输出数据并回车
+	scan 从控制台获取字符串数据，并将该数据作为lisp语句执行后返回
+
+	print 输出数据
+
+	println 输出数据并回车
 
 可以通过Add方法添加自定义函数：
 
-func (l *Lisp)Add(name string, func([]Token,*Lisp)(Token,error))
+	func (l *Lisp)Add(name string, func([]Token,*Lisp)(Token,error))
 
 Token为内部用来表示元素的类型
 
 	type Token struct{
-
 		Kind
-		
 		Text interface{}
-		
 	}
 
 Text只可能装入如下类型：[]Token、int64、float64、string
@@ -64,4 +65,4 @@ Text只可能装入如下类型：[]Token、int64、float64、string
 
 注意的是为了实现惰性求值，你添加的函数接收到的切片，每个元素都是未运算的，需要你根据需要进行运算（或直接解包）
 
-具体使用参见example.go
+具体使用参见example
