@@ -1,5 +1,7 @@
 package main
+
 import . "lisp"
+
 func main(){
 	lisp:=NewLisp()
 	lisp.IO()
