@@ -2,8 +2,8 @@ package main
 
 import . "lisp"
 
-func main(){
-	lisp:=NewLisp()
+func main() {
+	lisp := NewLisp()
 	lisp.IO()
 	lisp.EX()
 	lisp.Eval(`
@@ -12,7 +12,11 @@ func main(){
 		1
 		(each
 			(println "?:")
-			(println (scan))
+			(try
+				(error
+					(println (scan))
+				)
+			)
 		)
 	)`)
 }

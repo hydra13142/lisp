@@ -30,4 +30,25 @@ func main() {
 			)
 		)
 	`)
+	lisp.Eval(`
+		(each
+			(define
+				(g x y)
+				(cons x y)
+			)
+			(define
+				G
+				(omission g)
+			)
+			(println
+				(G 3)
+			)
+			(println
+				(G 3 2)
+			)
+			(println
+				(G 3 2 1)
+			)
+		)
+	`)
 }
