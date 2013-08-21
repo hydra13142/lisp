@@ -37,6 +37,16 @@ func (l *Lisp) EX() {
 		}
 		return b, err
 	})
+	l.Add("try", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 1 {
+			return None, ErrParaNum
+		}
+		_, err := p.Exec(t[0])
+		if err != nil {
+			return None, nil
+		}
+		return True, nil
+	})
 	l.Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var x, y, z Token
 		var err error
