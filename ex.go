@@ -53,7 +53,7 @@ func (l *Lisp) EX() {
 	l.Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var x, y, z Token
 		var err error
-		if t[0].Kind != Name {
+		if t[0].Kind != Label {
 			return None, ErrFitType
 		}
 		x, err = p.Exec(t[0])
@@ -63,7 +63,7 @@ func (l *Lisp) EX() {
 		if x.Kind != Front {
 			return None, ErrFitType
 		}
-		f := x.Text.(afts)
+		f := x.Text.(Lfac)
 		n := f.Para
 		if len(n) < len(t)-1 {
 			return None, ErrParaNum
@@ -76,8 +76,8 @@ func (l *Lisp) EX() {
 			}
 			hold = append(hold, y)
 		}
-		return Token{Back, pres(func(t2 []Token, p2 *Lisp) (Token, error) {
-			q := &Lisp{dad: p2, env: map[name]Token{}}
+		return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
+			q := &Lisp{dad: p2, env: map[Name]Token{}}
 			if len(t2) > len(n) || len(t2)+len(hold) < len(n) {
 				return None, ErrParaNum
 			}
@@ -95,7 +95,7 @@ func (l *Lisp) EX() {
 			for i, j = len(n)-1, 1; i >= len(t2); i, j = i-1, j+1 {
 				q.env[n[i]] = hold[len(hold)-j]
 			}
-			return q.Exec(Token{List, x.Text.(afts).Text})
+			return q.Exec(Token{List, x.Text.(Lfac).Text})
 		})}, nil
 	})
 	l.Add("omission", func(t []Token, p *Lisp) (Token, error) {
@@ -104,7 +104,7 @@ func (l *Lisp) EX() {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		if t[0].Kind != Name {
+		if t[0].Kind != Label {
 			return None, ErrFitType
 		}
 		x, err = p.Exec(t[0])
@@ -114,10 +114,10 @@ func (l *Lisp) EX() {
 		if x.Kind != Front {
 			return None, ErrFitType
 		}
-		f := x.Text.(afts)
+		f := x.Text.(Lfac)
 		n := f.Para
-		return Token{Back, pres(func(t2 []Token, p2 *Lisp) (Token, error) {
-			q := &Lisp{dad: p2, env: map[name]Token{}}
+		return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
+			q := &Lisp{dad: p2, env: map[Name]Token{}}
 			if len(t2) < len(n)-1 {
 				return None, ErrParaNum
 			}
@@ -141,7 +141,7 @@ func (l *Lisp) EX() {
 				z = append(z, y)
 			}
 			q.env[n[len(n)-1]] = Token{List, z}
-			return q.Exec(Token{List, x.Text.(afts).Text})
+			return q.Exec(Token{List, x.Text.(Lfac).Text})
 		})}, nil
 	})
 }

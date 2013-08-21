@@ -8,16 +8,14 @@ import (
 
 type Kind int
 
-type null struct{}
+type Name string
 
-type name string
+type Gfac func([]Token, *Lisp) (Token, error)
 
-type pres func([]Token, *Lisp) (Token, error)
-
-type afts struct {
-	Para []name
+type Lfac struct {
+	Para []Name
 	Text []Token
-	Make map[name]Token
+	Make map[Name]Token
 }
 
 type Token struct {
@@ -27,7 +25,7 @@ type Token struct {
 
 type Lisp struct {
 	dad *Lisp
-	env map[name]Token
+	env map[Name]Token
 }
 
 const (
@@ -39,7 +37,7 @@ const (
 	List
 	Back
 	Front
-	Name
+	Label
 	Operator
 )
 
@@ -50,17 +48,18 @@ var (
 	None = Token{List, []Token(nil)}
 )
 
-var Global = &Lisp{env: map[name]Token{}}
+var Global = &Lisp{env: map[Name]Token{}}
 
 var (
 	ErrNotOver = errors.New("Cannot scan to the end")
 	ErrUnquote = errors.New("Quote is unfold")
-	ErrNotFind = errors.New("Not find this name")
+	ErrNotFind = errors.New("Not find this Name")
 	ErrNotFunc = errors.New("Not a function")
 	ErrParaNum = errors.New("Wrong parament number")
 	ErrFitType = errors.New("Lisp type is wrong")
-	ErrNotName = errors.New("This's not a name")
+	ErrNotName = errors.New("This's not a Name")
 	ErrIsEmpty = errors.New("Fold is empty")
+	ErrNotConv = errors.New("Cannot translate")
 )
 
 func Scan(s string) (list []Token, err error) {
@@ -83,7 +82,7 @@ func Scan(s string) (list []Token, err error) {
 		case 5:
 			list = append(list, Token{String, a})
 		case 6:
-			list = append(list, Token{Name, a})
+			list = append(list, Token{Label, a})
 		}
 	}
 	if !scanner.Over() {
@@ -150,8 +149,6 @@ func Tree(tkn []Token) ([]Token, error) {
 
 func (t Kind) String() string {
 	switch t {
-	case Null:
-		return "null"
 	case Int:
 		return "int"
 	case Float:
@@ -166,15 +163,15 @@ func (t Kind) String() string {
 		return "go"
 	case Front:
 		return "lisp"
-	case Name:
-		return "name"
+	case Label:
+		return "Name"
 	case Operator:
 		return "operator"
 	}
 	return "unknown"
 }
 
-func (l afts) String() string {
+func (l Lfac) String() string {
 	return fmt.Sprintf("{front : (%v,%v)}", l.Para, l.Text)
 }
 
@@ -291,7 +288,7 @@ func (t *Token) Cmp(p *Token) int {
 
 func NewLisp() *Lisp {
 	x := new(Lisp)
-	x.env = map[name]Token{}
+	x.env = map[Name]Token{}
 	x.dad = nil
 	for i, f := range Global.env {
 		x.env[i] = f
@@ -300,7 +297,7 @@ func NewLisp() *Lisp {
 }
 
 func (l *Lisp) Add(s string, f func([]Token, *Lisp) (Token, error)) {
-	l.env[name(s)] = Token{Back, pres(f)}
+	l.env[Name(s)] = Token{Back, Gfac(f)}
 }
 
 func (l *Lisp) Exec(f Token) (ans Token, err error) {
@@ -312,9 +309,9 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 	switch f.Kind {
 	case Fold:
 		return Token{List, f.Text.([]Token)}, nil
-	case Name:
+	case Label:
 		for v := l; ; {
-			ct, ok = v.env[f.Text.(name)]
+			ct, ok = v.env[f.Text.(Name)]
 			if ok {
 				break
 			}
@@ -334,9 +331,9 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 		}
 		ct = ls[0]
 		switch ct.Kind {
-		case Name:
+		case Label:
 			for v := l; ; {
-				ct, ok = v.env[ls[0].Text.(name)]
+				ct, ok = v.env[ls[0].Text.(Name)]
 				if ok {
 					break
 				}
@@ -356,10 +353,10 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 		}
 		switch ct.Kind {
 		case Back:
-			return ct.Text.(pres)(ls[1:], l)
+			return ct.Text.(Gfac)(ls[1:], l)
 		case Front:
-			lp := ct.Text.(afts)
-			q := &Lisp{dad: l, env: map[name]Token{}}
+			lp := ct.Text.(Lfac)
+			q := &Lisp{dad: l, env: map[Name]Token{}}
 			if len(ls) != len(lp.Para)+1 {
 				return None, ErrParaNum
 			}
@@ -457,14 +454,14 @@ func init() {
 		for i < len(s) && !bnd(s[i]) {
 			i++
 		}
-		a := name(string(s[:i]))
+		a := Name(string(s[:i]))
 		return a, i
 	})
 	Global.Add("quote", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		if t[0].Kind == Name {
+		if t[0].Kind == Label {
 			return p.Exec(t[0])
 		}
 		return t[0], nil
@@ -474,7 +471,7 @@ func init() {
 			return None, ErrParaNum
 		}
 		ans = t[0]
-		if ans.Kind == Name {
+		if ans.Kind == Label {
 			ans, err = p.Exec(ans)
 			if err != nil {
 				return None, err
@@ -613,18 +610,18 @@ func init() {
 			return None, ErrFitType
 		}
 		t = a.Text.([]Token)
-		x := make([]name, 0, len(t))
+		x := make([]Name, 0, len(t))
 		for _, i := range t {
-			if i.Kind != Name {
+			if i.Kind != Label {
 				return None, ErrNotName
 			}
-			x = append(x, i.Text.(name))
+			x = append(x, i.Text.(Name))
 		}
-		u := make(map[name]Token)
+		u := make(map[Name]Token)
 		for i, j := range p.env {
 			u[i] = j
 		}
-		return Token{Front, afts{x, b.Text.([]Token), u}}, nil
+		return Token{Front, Lfac{x, b.Text.([]Token), u}}, nil
 	})
 	Global.Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
@@ -632,10 +629,10 @@ func init() {
 		}
 		a, b := t[0], t[1]
 		switch a.Kind {
-		case Name:
+		case Label:
 			ans, err = p.Exec(b)
 			if err == nil {
-				p.env[a.Text.(name)] = ans
+				p.env[a.Text.(Name)] = ans
 			}
 			return ans, err
 		case List:
@@ -643,18 +640,18 @@ func init() {
 				return None, ErrFitType
 			}
 			t = a.Text.([]Token)
-			x := make([]name, 0, len(t))
+			x := make([]Name, 0, len(t))
 			for _, i := range t {
-				if i.Kind != Name {
+				if i.Kind != Label {
 					return None, ErrNotName
 				}
-				x = append(x, i.Text.(name))
+				x = append(x, i.Text.(Name))
 			}
-			u := make(map[name]Token)
+			u := make(map[Name]Token)
 			for i, j := range p.env {
 				u[i] = j
 			}
-			ans = Token{Front, afts{x[1:], b.Text.([]Token), u}}
+			ans = Token{Front, Lfac{x[1:], b.Text.([]Token), u}}
 			p.env[x[0]] = ans
 			return ans, nil
 		}

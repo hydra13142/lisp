@@ -81,6 +81,15 @@ func (l *Lisp) IO() {
 		}
 		return p.Eval(one.total)
 	})
+	l.Add("load", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 1 {
+			return None, ErrParaNum
+		}
+		if t[0].Kind != String {
+			return None, ErrFitType
+		}
+		return p.Load(t[0].Text.(string))
+	})
 	l.Add("error", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum

@@ -6,6 +6,7 @@ func main() {
 	lisp := NewLisp()
 	lisp.IO()
 	lisp.EX()
+	lisp.Load("C:\\Users\\liudiwu\\Documents\\GitHub\\lisp\\example\\fbnq.lisp")
 	lisp.Eval(`
 	(loop
 		()
