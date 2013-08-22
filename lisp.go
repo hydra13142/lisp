@@ -127,12 +127,18 @@ func (l *Lisp) Eval(s string) (Token, error) {
 }
 
 func (l *Lisp) Load(s string) (Token, error) {
-	file, err := os.Open(s)
+	var file *os.File
+	var data []byte
+	var err error
+	file, err = os.Open(s)
 	if err != nil {
-		return None, err
+		file, err = os.Open(s + ".lisp")
+		if err != nil {
+			return None, err
+		}
 	}
 	defer file.Close()
-	data, err := ioutil.ReadAll(file)
+	data, err = ioutil.ReadAll(file)
 	if err != nil {
 		return None, err
 	}

@@ -40,16 +40,6 @@ func (l *Lisp) EX() {
 		}
 		return b, err
 	})
-	l.Add("try", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) != 1 {
-			return None, ErrParaNum
-		}
-		ans, err := p.Exec(t[0])
-		if err != nil {
-			return Token{List, []Token{None, ans}}, nil
-		}
-		return Token{List, []Token{True, ans}}, nil
-	})
 	l.Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var x, y, z Token
 		var err error
