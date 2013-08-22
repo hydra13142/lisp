@@ -1,7 +1,7 @@
 package lisp
 
 func init() {
-	Global.Add("+", func(t []Token, p *Lisp) (Token, error) {
+	Add("+", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -46,7 +46,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Global.Add("-", func(t []Token, p *Lisp) (Token, error) {
+	Add("-", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -76,7 +76,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Global.Add("*", func(t []Token, p *Lisp) (Token, error) {
+	Add("*", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -106,7 +106,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Global.Add("/", func(t []Token, p *Lisp) (Token, error) {
+	Add("/", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -136,7 +136,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Global.Add("%", func(t []Token, p *Lisp) (Token, error) {
+	Add("%", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}

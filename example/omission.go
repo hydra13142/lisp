@@ -9,24 +9,21 @@ func main() {
 	console.Eval(`
 		(each
 			(define
-				(f x y z)
-				(+ (+ x y) z)
+				(g x y)
+				(cons x y)
 			)
 			(define
-				F
-				(default f 1 2 3)
+				G
+				(omission g)
 			)
 			(println
-				(F)
+				(G 3)
 			)
 			(println
-				(F 3)
+				(G 3 2)
 			)
 			(println
-				(F 3 2)
-			)
-			(println
-				(F 3 2 1)
+				(G 3 2 1)
 			)
 		)
 	`)

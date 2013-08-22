@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/hydra13142/lisp"
+	"lisp/parser"
 )
 
-var express = &lisp.Pattern{}
+var express = &parser.Pattern{}
 
 func init() {
 	express.Add(func(s []byte) (interface{}, int) {
@@ -16,7 +16,7 @@ func init() {
 		return nil, 0
 	})
 	express.Add(func(s []byte) (interface{}, int) {
-		a, i := lisp.ParseFloat(s)
+		a, i := parser.ParseFloat(s)
 		return a, i
 	})
 }

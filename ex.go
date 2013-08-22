@@ -1,7 +1,7 @@
 package lisp
 
-func (l *Lisp) EX() {
-	l.Add("if", func(t []Token, p *Lisp) (Token, error) {
+func EX() {
+	Add("if", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 3 {
 			return None, ErrParaNum
 		}
@@ -15,7 +15,7 @@ func (l *Lisp) EX() {
 			return p.Exec(t[2])
 		}
 	})
-	l.Add("loop", func(t []Token, p *Lisp) (Token, error) {
+	Add("loop", func(t []Token, p *Lisp) (Token, error) {
 		var a, b Token
 		var err error
 		if len(t) != 3 {
@@ -40,7 +40,7 @@ func (l *Lisp) EX() {
 		}
 		return b, err
 	})
-	l.Add("default", func(t []Token, p *Lisp) (Token, error) {
+	Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var x, y, z Token
 		var err error
 		x, err = p.Exec(t[0])
@@ -85,7 +85,7 @@ func (l *Lisp) EX() {
 			return q.Exec(Token{List, x.Text.(Lfac).Text})
 		})}, nil
 	})
-	l.Add("omission", func(t []Token, p *Lisp) (Token, error) {
+	Add("omission", func(t []Token, p *Lisp) (Token, error) {
 		var x, y Token
 		var err error
 		if len(t) != 1 {

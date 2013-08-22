@@ -1,17 +1,31 @@
 package main
 
-import . "lisp"
+import (
+	"lisp"
+	"lisp/conv"
+	"lisp/math"
+	"os"
+)
+
+var env *lisp.Lisp
 
 func main() {
-	lisp := NewLisp()
-	lisp.IO()
-	lisp.EX()
-	lisp.Eval(`
+	l := len(os.Args) - 1
+	if l > 0 {
+		for _, f := range os.Args[1:l] {
+			env.Eval(`(load "` + f + `")`)
+		}
+		if os.Args[l] != "-" {
+			env.Eval(`(println (load "` + os.Args[l] + `"))`)
+			return
+		}
+	}
+	env.Eval(`
 	(loop
 		()
 		1
 		(each
-			(println "?:")
+			(println "==>")
 			(catch
 				(error
 					(println (scan))
@@ -19,4 +33,32 @@ func main() {
 			)
 		)
 	)`)
+}
+func init() {
+	lisp.IO()
+	lisp.EX()
+
+	lisp.Add("int", conv.Int)
+	lisp.Add("float", conv.Float)
+	lisp.Add("list", conv.List)
+	lisp.Add("string", conv.String)
+
+	lisp.Add("sin", math.Sin)
+	lisp.Add("sinh", math.Sinh)
+	lisp.Add("asin", math.Asin)
+	lisp.Add("asinh", math.Asinh)
+	lisp.Add("cos", math.Cos)
+	lisp.Add("cosh", math.Cosh)
+	lisp.Add("acos", math.Acos)
+	lisp.Add("acosh", math.Acosh)
+	lisp.Add("tan", math.Tan)
+	lisp.Add("tanh", math.Tanh)
+	lisp.Add("atan", math.Atan)
+	lisp.Add("atanh", math.Atanh)
+	lisp.Add("exp", math.Exp)
+	lisp.Add("log", math.Log)
+	lisp.Add("pow", math.Pow)
+	lisp.Add("sqrt", math.Sqrt)
+	
+	env = lisp.NewLisp()
 }

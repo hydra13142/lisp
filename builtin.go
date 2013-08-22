@@ -1,7 +1,7 @@
 package lisp
 
 func init() {
-	Global.Add("quote", func(t []Token, p *Lisp) (Token, error) {
+	Add("quote", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
@@ -10,7 +10,7 @@ func init() {
 		}
 		return t[0], nil
 	})
-	Global.Add("eval", func(t []Token, p *Lisp) (ans Token, err error) {
+	Add("eval", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
@@ -23,7 +23,7 @@ func init() {
 		}
 		return p.Exec(ans)
 	})
-	Global.Add("atom", func(t []Token, p *Lisp) (Token, error) {
+	Add("atom", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
@@ -37,7 +37,7 @@ func init() {
 			return None, nil
 		}
 	})
-	Global.Add("eq", func(t []Token, p *Lisp) (Token, error) {
+	Add("eq", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -55,7 +55,7 @@ func init() {
 			return None, nil
 		}
 	})
-	Global.Add("car", func(t []Token, p *Lisp) (Token, error) {
+	Add("car", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
@@ -71,7 +71,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Global.Add("cdr", func(t []Token, p *Lisp) (Token, error) {
+	Add("cdr", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
@@ -87,7 +87,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Global.Add("cons", func(t []Token, p *Lisp) (Token, error) {
+	Add("cons", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -108,7 +108,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Global.Add("cond", func(t []Token, p *Lisp) (ans Token, err error) {
+	Add("cond", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) == 0 {
 			return None, ErrParaNum
 		}
@@ -130,7 +130,7 @@ func init() {
 		}
 		return None, nil
 	})
-	Global.Add("each", func(t []Token, p *Lisp) (ans Token, err error) {
+	Add("each", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) == 0 {
 			return None, ErrParaNum
 		}
@@ -141,67 +141,5 @@ func init() {
 			}
 		}
 		return ans, err
-	})
-	Global.Add("lambda", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) != 2 {
-			return None, ErrParaNum
-		}
-		a, b := t[0], t[1]
-		if a.Kind != List {
-			return None, ErrFitType
-		}
-		if b.Kind != List {
-			return None, ErrFitType
-		}
-		t = a.Text.([]Token)
-		x := make([]Name, 0, len(t))
-		for _, i := range t {
-			if i.Kind != Label {
-				return None, ErrNotName
-			}
-			x = append(x, i.Text.(Name))
-		}
-		u := make(map[Name]Token)
-		for i, j := range p.env {
-			u[i] = j
-		}
-		ans = Token{Front, Lfac{x, b.Text.([]Token), u}}
-		u[Name("self")] = ans
-		return ans, nil
-	})
-	Global.Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) != 2 {
-			return None, ErrParaNum
-		}
-		a, b := t[0], t[1]
-		switch a.Kind {
-		case Label:
-			ans, err = p.Exec(b)
-			if err == nil {
-				p.env[a.Text.(Name)] = ans
-			}
-			return ans, err
-		case List:
-			if b.Kind != List {
-				return None, ErrFitType
-			}
-			t = a.Text.([]Token)
-			x := make([]Name, 0, len(t))
-			for _, i := range t {
-				if i.Kind != Label {
-					return None, ErrNotName
-				}
-				x = append(x, i.Text.(Name))
-			}
-			u := make(map[Name]Token)
-			for i, j := range p.env {
-				u[i] = j
-			}
-			ans = Token{Front, Lfac{x[1:], b.Text.([]Token), u}}
-			u[Name("self")] = ans
-			p.env[x[0]] = ans
-			return ans, nil
-		}
-		return None, ErrFitType
 	})
 }

@@ -1,6 +1,8 @@
 package lisp
 
 import (
+	"bytes"
+	"io"
 	"io/ioutil"
 	"os"
 )
@@ -13,15 +15,12 @@ type Lisp struct {
 func NewLisp() *Lisp {
 	x := new(Lisp)
 	x.env = map[Name]Token{}
-	x.dad = nil
-	for i, f := range Global.env {
-		x.env[i] = f
-	}
+	x.dad = Global
 	return x
 }
 
-func (l *Lisp) Add(s string, f func([]Token, *Lisp) (Token, error)) {
-	l.env[Name(s)] = Token{Back, Gfac(f)}
+func Add(s string, f func([]Token, *Lisp) (Token, error)) {
+	Global.env[Name(s)] = Token{Back, Gfac(f)}
 }
 
 func (l *Lisp) Exec(f Token) (ans Token, err error) {
@@ -149,5 +148,24 @@ func (l *Lisp) Load(s string) (Token, error) {
 	if err != nil {
 		return None, err
 	}
-	return l.Eval(string(data))
+	buf:=bytes.NewBuffer(data)
+	one := block{}
+	for {
+		data, err := buf.ReadBytes('\n')
+		if err != nil {
+			if err != io.EOF {
+				return None, err
+			}
+			err = one.feed(data)
+			break
+		}
+		err = one.feed(data)
+		if err != nil {
+			return None, err
+		}
+	}
+	if !one.over() {
+		return None, ErrUnquote
+	}
+	return l.Eval(one.total)
 }

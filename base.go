@@ -37,7 +37,7 @@ var (
 	True = Token{Int, int64(1)}
 	None = Token{List, []Token(nil)}
 
-	Global = &Lisp{env: map[Name]Token{}}
+	Global = &Lisp{env: map[Name]Token{}, dad: nil}
 
 	ErrNotOver = errors.New("Cannot scan to the end")
 	ErrUnquote = errors.New("Quote is unfold")
@@ -48,6 +48,7 @@ var (
 	ErrNotName = errors.New("This's not a Name")
 	ErrIsEmpty = errors.New("Fold is empty")
 	ErrNotConv = errors.New("Cannot translate")
+	ErrRefused = errors.New("Can't remove a back function")
 )
 
 func (t Kind) String() string {

@@ -3,7 +3,7 @@ package lisp
 import "fmt"
 
 func init() {
-	Global.Add("raise", func(t []Token, p *Lisp) (Token, error) {
+	Add("raise", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
@@ -16,7 +16,7 @@ func init() {
 		}
 		return None, fmt.Errorf(ans.Text.(string))
 	})
-	Global.Add("catch", func(t []Token, p *Lisp) (Token, error) {
+	Add("catch", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
@@ -26,7 +26,7 @@ func init() {
 		}
 		return None, nil
 	})
-	Global.Add("error", func(t []Token, p *Lisp) (Token, error) {
+	Add("error", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}

@@ -1,7 +1,7 @@
 package lisp
 
 func init() {
-	Global.Add("and", func(t []Token, p *Lisp) (Token, error) {
+	Add("and", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -22,7 +22,7 @@ func init() {
 			return None, nil
 		}
 	})
-	Global.Add("or", func(t []Token, p *Lisp) (Token, error) {
+	Add("or", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -43,7 +43,7 @@ func init() {
 			return None, nil
 		}
 	})
-	Global.Add("xor", func(t []Token, p *Lisp) (Token, error) {
+	Add("xor", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -61,7 +61,7 @@ func init() {
 			return None, nil
 		}
 	})
-	Global.Add("not", func(t []Token, p *Lisp) (Token, error) {
+	Add("not", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
