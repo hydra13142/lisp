@@ -49,7 +49,7 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		if x.Cmp(&y) == 0 {
+		if x.Eq(&y) {
 			return True, nil
 		} else {
 			return None, nil

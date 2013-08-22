@@ -34,19 +34,22 @@ func (t *Token) Eq(p *Token) bool {
 		return t.Text.(float64) == p.Text.(float64)
 	case String:
 		return t.Text.(string) == p.Text.(string)
-	case Fold, List:
+	case List:
 		a, b := t.Text.([]Token), p.Text.([]Token)
 		m, n := len(a), len(b)
-		for i := 0; i < m && i < n; i++ {
+		if m != n {
+			return false
+		}
+		for i := 0; i < m; i++ {
 			j := a[i].Eq(&b[i])
 			if !j {
 				return false
 			}
 		}
-		return true
 	default:
 		return false
 	}
+	return true
 }
 
 func (t *Token) Cmp(p *Token) int {
