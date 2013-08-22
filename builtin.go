@@ -125,6 +125,7 @@ func init() {
 					}
 					continue
 				}
+				return None, ErrParaNum
 			}
 			return None, ErrFitType
 		}
