@@ -142,7 +142,7 @@ func init() {
 		}
 		return ans, err
 	})
-	Global.Add("lambda", func(t []Token, p *Lisp) (Token, error) {
+	Global.Add("lambda", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
@@ -165,7 +165,9 @@ func init() {
 		for i, j := range p.env {
 			u[i] = j
 		}
-		return Token{Front, Lfac{x, b.Text.([]Token), u}}, nil
+		ans = Token{Front, Lfac{x, b.Text.([]Token), u}}
+		u[Name("self")] = ans
+		return ans, nil
 	})
 	Global.Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
@@ -196,6 +198,7 @@ func init() {
 				u[i] = j
 			}
 			ans = Token{Front, Lfac{x[1:], b.Text.([]Token), u}}
+			u[Name("self")] = ans
 			p.env[x[0]] = ans
 			return ans, nil
 		}

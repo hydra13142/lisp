@@ -93,8 +93,14 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 					return None, err
 				}
 			}
-			q.env[Name("self")] = ct
-			return q.Exec(Token{Text: lp.Text, Kind: List})
+			ans, err = q.Exec(Token{Text: lp.Text, Kind: List})
+			if err != nil {
+				return None, err
+			}
+			for i, _ := range lp.Make {
+				lp.Make[i] = q.env[i]
+			}
+			return ans, nil
 		default:
 			return None, ErrNotFunc
 		}
