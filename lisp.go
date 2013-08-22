@@ -93,6 +93,7 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 					return None, err
 				}
 			}
+			q.env[Name("self")] = ct
 			return q.Exec(Token{Text: lp.Text, Kind: List})
 		default:
 			return None, ErrNotFunc
@@ -132,7 +133,7 @@ func (l *Lisp) Load(s string) (Token, error) {
 	var err error
 	file, err = os.Open(s)
 	if err != nil {
-		file, err = os.Open(s + ".lisp")
+		file, err = os.Open(s + ".lsp")
 		if err != nil {
 			return None, err
 		}

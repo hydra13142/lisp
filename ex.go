@@ -82,6 +82,7 @@ func (l *Lisp) EX() {
 			for i, j = len(n)-1, 1; i >= len(t2); i, j = i-1, j+1 {
 				q.env[n[i]] = hold[len(hold)-j]
 			}
+			q.env[Name("self")] = x
 			return q.Exec(Token{List, x.Text.(Lfac).Text})
 		})}, nil
 	})
@@ -125,6 +126,7 @@ func (l *Lisp) EX() {
 				z = append(z, y)
 			}
 			q.env[n[len(n)-1]] = Token{List, z}
+			q.env[Name("self")] = x
 			return q.Exec(Token{List, x.Text.(Lfac).Text})
 		})}, nil
 	})
