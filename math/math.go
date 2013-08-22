@@ -1,7 +1,7 @@
 package math
 
 import (
-	"lisp"
+	"github.com/hydra13142/lisp"
 	"math"
 )
 

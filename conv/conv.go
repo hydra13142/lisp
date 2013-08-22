@@ -1,8 +1,8 @@
 package conv
 
 import (
-	"lisp"
-	"lisp/parser"
+	"github.com/hydra13142/lisp"
+	"github.com/hydra13142/lisp/parser"
 )
 
 func Int(t []lisp.Token, p *lisp.Lisp) (lisp.Token, error) {
