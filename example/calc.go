@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"lisp/parser"
+	"github.com/hydra13142/lisp/parser"
 )
 
 var express = &parser.Pattern{}

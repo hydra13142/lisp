@@ -1,9 +1,9 @@
 package main
 
 import (
-	"lisp"
-	"lisp/conv"
-	"lisp/math"
+	"github.com/hydra13142/lisp"
+	"github.com/hydra13142/lisp/conv"
+	"github.com/hydra13142/lisp/math"
 	"os"
 )
 

@@ -1,6 +1,6 @@
 package main
 
-import "lisp"
+import "github.com/hydra13142/lisp"
 
 func main() {
 	lisp.IO()
