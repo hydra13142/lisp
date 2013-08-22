@@ -12,7 +12,7 @@ func main() {
 		1
 		(each
 			(println "?:")
-			(try
+			(catch
 				(error
 					(println (scan))
 				)

@@ -26,4 +26,15 @@ func init() {
 		}
 		return None, nil
 	})
+	Global.Add("error", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 1 {
+			return None, ErrParaNum
+		}
+		ans, err := p.Exec(t[0])
+		if err != nil {
+			fmt.Println(err)
+			return None, err
+		}
+		return ans, nil
+	})
 }

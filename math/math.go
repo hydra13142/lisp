@@ -2,7 +2,6 @@ package math
 
 import (
 	"lisp"
-	"lisp/parser"
 	"math"
 )
 
@@ -14,52 +13,6 @@ var (
 	Sqrt                   lisp.Gfac
 	Pow                    lisp.Gfac
 )
-
-func Int(t []lisp.Token, p *lisp.Lisp) (lisp.Token, error) {
-	if len(t) != 1 {
-		return lisp.None, lisp.ErrParaNum
-	}
-	u, err := p.Exec(t[0])
-	if err != nil {
-		return lisp.None, err
-	}
-	switch u.Kind {
-	case lisp.Int:
-		return u, nil
-	case lisp.Float:
-		return lisp.Token{lisp.Int, int64(u.Text.(float64))}, nil
-	case lisp.String:
-		a, b := parser.ParseInt([]byte(u.Text.(string)))
-		if b == 0 {
-			return lisp.None, lisp.ErrNotConv
-		}
-		return lisp.Token{lisp.Int, a}, nil
-	}
-	return lisp.None, lisp.ErrFitType
-}
-
-func Float(t []lisp.Token, p *lisp.Lisp) (lisp.Token, error) {
-	if len(t) != 1 {
-		return lisp.None, lisp.ErrParaNum
-	}
-	u, err := p.Exec(t[0])
-	if err != nil {
-		return lisp.None, err
-	}
-	switch u.Kind {
-	case lisp.Int:
-		return lisp.Token{lisp.Float, float64(u.Text.(int64))}, nil
-	case lisp.Float:
-		return u, nil
-	case lisp.String:
-		a, b := parser.ParseFloat([]byte(u.Text.(string)))
-		if b == 0 {
-			return lisp.None, lisp.ErrNotConv
-		}
-		return lisp.Token{lisp.Float, a}, nil
-	}
-	return lisp.None, lisp.ErrFitType
-}
 
 func Wrap1(f func(float64) float64) func([]lisp.Token, *lisp.Lisp) (lisp.Token, error) {
 	return func(t []lisp.Token, p *lisp.Lisp) (lisp.Token, error) {
