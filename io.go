@@ -39,6 +39,7 @@ func (b *block) feed(s []byte) error {
 				if i+1 < len(s) {
 					if s[i+1] == '(' && (i+2 >= len(s) || s[i+2] != '\'') {
 						b.count++
+						i++
 					} else {
 						single = true
 					}

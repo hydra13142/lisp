@@ -43,9 +43,6 @@ func (l *Lisp) EX() {
 	l.Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var x, y, z Token
 		var err error
-		if t[0].Kind != Label {
-			return None, ErrFitType
-		}
 		x, err = p.Exec(t[0])
 		if err != nil {
 			return None, err
@@ -93,9 +90,6 @@ func (l *Lisp) EX() {
 		var err error
 		if len(t) != 1 {
 			return None, ErrParaNum
-		}
-		if t[0].Kind != Label {
-			return None, ErrFitType
 		}
 		x, err = p.Exec(t[0])
 		if err != nil {
