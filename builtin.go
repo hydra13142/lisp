@@ -16,19 +16,6 @@ func init() {
 		}
 		return t[0], nil
 	})
-	Add("eval", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) != 1 {
-			return None, ErrParaNum
-		}
-		ans = t[0]
-		if ans.Kind == Label {
-			ans, err = p.Exec(ans)
-			if err != nil {
-				return None, err
-			}
-		}
-		return p.Exec(ans)
-	})
 	Add("atom", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum

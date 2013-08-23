@@ -12,6 +12,11 @@ type Name string
 
 type Gfac func([]Token, *Lisp) (Token, error)
 
+type Macr struct {
+	Para []Name
+	Text []Token
+}
+
 type Lfac struct {
 	Para []Name
 	Text []Token
@@ -26,6 +31,7 @@ const (
 	Fold
 	List
 	Back
+	Macro
 	Front
 	Label
 	Operator
@@ -65,6 +71,8 @@ func (t Kind) String() string {
 		return "list"
 	case Back:
 		return "go"
+	case Macro:
+		return "macro"
 	case Front:
 		return "lisp"
 	case Label:
@@ -73,6 +81,10 @@ func (t Kind) String() string {
 		return "operator"
 	}
 	return "unknown"
+}
+
+func (m Macr) String() string {
+	return fmt.Sprintf("{macro : (%v,%v)}", m.Para, m.Text)
 }
 
 func (l Lfac) String() string {

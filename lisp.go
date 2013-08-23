@@ -77,6 +77,16 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 		switch ct.Kind {
 		case Back:
 			return ct.Text.(Gfac)(ls[1:], l)
+		case Macro:
+			mp := ct.Text.(Macr)
+			if len(ls) != len(mp.Para)+1 {
+				return None, ErrParaNum
+			}
+			xp := map[Name]Token{}
+			for i, t := range ls[1:] {
+				xp[mp.Para[i]] = t
+			}
+			return l.Exec(Repl(Token{List, mp.Text}, xp))
 		case Front:
 			lp := ct.Text.(Lfac)
 			q := &Lisp{dad: l, env: map[Name]Token{}}
@@ -148,7 +158,7 @@ func (l *Lisp) Load(s string) (Token, error) {
 	if err != nil {
 		return None, err
 	}
-	buf:=bytes.NewBuffer(data)
+	buf := bytes.NewBuffer(data)
 	one := block{}
 	for {
 		data, err := buf.ReadBytes('\n')

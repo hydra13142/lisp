@@ -84,3 +84,21 @@ func Tree(tkn []Token) ([]Token, error) {
 	copy(ans[1:], rest)
 	return ans, nil
 }
+
+func Repl(tkn Token, lst map[Name]Token) Token {
+	switch tkn.Kind {
+	case List:
+		l := tkn.Text.([]Token)
+		x := make([]Token, len(l))
+		for i, t := range l {
+			x[i] = Repl(t, lst)
+		}
+		return Token{List, x}
+	case Label:
+		t, ok := lst[tkn.Text.(Name)]
+		if ok {
+			return t
+		}
+	}
+	return tkn
+}

@@ -42,17 +42,32 @@ func init() {
 				p.env[a.Text.(Name)] = ans
 			}
 			return ans, err
+		case Fold:
+			if b.Kind != List {
+				return None, ErrFitType
+			}
+			t = a.Text.([]Token)
+			x := make([]Name, len(t))
+			for i, c := range t {
+				if c.Kind != Label {
+					return None, ErrNotName
+				}
+				x[i] = c.Text.(Name)
+			}
+			ans = Token{Macro, Macr{x[1:], b.Text.([]Token)}}
+			p.env[x[0]] = ans
+			return ans, nil
 		case List:
 			if b.Kind != List {
 				return None, ErrFitType
 			}
 			t = a.Text.([]Token)
-			x := make([]Name, 0, len(t))
-			for _, i := range t {
-				if i.Kind != Label {
+			x := make([]Name, len(t))
+			for i, c := range t {
+				if c.Kind != Label {
 					return None, ErrNotName
 				}
-				x = append(x, i.Text.(Name))
+				x[i] = c.Text.(Name)
 			}
 			u := make(map[Name]Token)
 			for i, j := range p.env {
