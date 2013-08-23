@@ -52,6 +52,9 @@ func init() {
 		if err != nil {
 			return None, err
 		}
+		if x.Kind == Back || y.Kind == Back {
+			return None, ErrFitType
+		}
 		if x.Eq(&y) {
 			return True, nil
 		} else {
@@ -111,7 +114,7 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Add("cond", func(t []Token, p *Lisp) (ans Token, err error) {
+	Add("cond", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) == 0 {
 			return None, ErrParaNum
 		}
@@ -119,7 +122,7 @@ func init() {
 			if i.Kind == List {
 				t := i.Text.([]Token)
 				if len(t) == 2 {
-					ans, err = p.Exec(t[0])
+					ans, err := p.Exec(t[0])
 					if err != nil {
 						return None, err
 					}
@@ -132,7 +135,7 @@ func init() {
 			}
 			return None, ErrFitType
 		}
-		return None, nil
+		return Token{}, nil
 	})
 	Add("each", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) == 0 {

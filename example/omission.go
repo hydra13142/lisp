@@ -3,8 +3,6 @@ package main
 import "github.com/hydra13142/lisp"
 
 func main() {
-	lisp.IO()
-	lisp.EX()
 	console := lisp.NewLisp()
 	console.Eval(`
 		(each

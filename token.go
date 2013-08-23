@@ -24,6 +24,10 @@ func (t *Token) Bool() bool {
 }
 
 func (t *Token) Eq(p *Token) bool {
+	var (
+		a, b []Token
+		c, d []Name
+	)
 	if t.Kind != p.Kind {
 		return false
 	}
@@ -36,22 +40,55 @@ func (t *Token) Eq(p *Token) bool {
 		return t.Text.(float64) == p.Text.(float64)
 	case String:
 		return t.Text.(string) == p.Text.(string)
-	case List:
-		a, b := t.Text.([]Token), p.Text.([]Token)
-		m, n := len(a), len(b)
+	case Back:
+		return false
+	case Label:
+		return t.Text.(Name) == p.Text.(Name)
+	case Front:
+		x := t.Text.(Lfac).Make
+		y := p.Text.(Lfac).Make
+		m, n := len(x), len(y)
+		if m != n {
+			return false
+		}
+		for i, j := range x {
+			k, v := y[i]
+			if !v {
+				return false
+			}
+			if !j.Eq(&k) {
+				return false
+			}
+		}
+		a, b = t.Text.(Lfac).Text, p.Text.(Lfac).Text
+		c, d = t.Text.(Lfac).Para, p.Text.(Lfac).Para
+	case Macro:
+		a, b = t.Text.(Macr).Text, p.Text.(Macr).Text
+		c, d = t.Text.(Macr).Para, p.Text.(Macr).Para
+	case Fold, List:
+		a, b = t.Text.([]Token), p.Text.([]Token)
+	}
+	m, n := len(a), len(b)
+	if m != n {
+		return false
+	}
+	for i := 0; i < m; i++ {
+		if !a[i].Eq(&b[i]) {
+			return false
+		}
+	}
+	if c != nil {
+		m, n := len(c), len(d)
 		if m != n {
 			return false
 		}
 		for i := 0; i < m; i++ {
-			j := a[i].Eq(&b[i])
-			if !j {
+			if c[i] != d[i] {
 				return false
 			}
 		}
-	default:
-		return false
 	}
-	return true
+	return false
 }
 
 func (t *Token) Cmp(p *Token) int {
@@ -111,7 +148,7 @@ func (t *Token) Cmp(p *Token) int {
 		return 0
 	}
 	if a {
-		return 1
+		return +1
 	}
 	if b {
 		return -1

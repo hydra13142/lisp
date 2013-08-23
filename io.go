@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func IO() {
+func init() {
 	Add("scan", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 0 {
 			return None, ErrParaNum

@@ -35,8 +35,6 @@ func main() {
 	)`)
 }
 func init() {
-	lisp.IO()
-	lisp.EX()
 
 	lisp.Add("int", conv.Int)
 	lisp.Add("float", conv.Float)
