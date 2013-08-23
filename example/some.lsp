@@ -3,12 +3,17 @@
 	(omission
 		(lambda
 			(x y)
-			(cond
-				((atom y)
-					x
-				)
-				(1
-					(self (+ x (car y)) (cdr y))
+			(if
+				(atom y)
+				x
+				(loop
+					()
+					(not (atom y))
+					(each
+						(define z (car y))
+						(define y (cdr y))
+						(define x (+ x z))
+					)
 				)
 			)
 		)
@@ -19,15 +24,21 @@
 	(omission
 		(lambda
 			(x y)
-			(cond
-				((atom y)
-					x
-				)
-				((>= x (car y))
-					(self x (cdr y))
-				)
-				(1
-					(self (car y) (cdr y))
+			(if
+				(atom y)
+				x
+				(loop
+					()
+					(not (atom y))
+					(each
+						(define z (car y))
+						(define y (cdr y))
+						(if
+							(< x z)
+							(define x z)
+							x
+						)
+					)
 				)
 			)
 		)
@@ -38,15 +49,21 @@
 	(omission
 		(lambda
 			(x y)
-			(cond
-				((atom y)
-					x
-				)
-				((<= x (car y))
-					(self x (cdr y))
-				)
-				(1
-					(self (car y) (cdr y))
+			(if
+				(atom y)
+				x
+				(loop
+					()
+					(not (atom y))
+					(each
+						(define z (car y))
+						(define y (cdr y))
+						(if
+							(> x z)
+							(define x z)
+							x
+						)
+					)
 				)
 			)
 		)
@@ -63,3 +80,4 @@
 	)
 )
 (quote "ok")
+

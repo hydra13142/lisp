@@ -102,3 +102,21 @@ func Repl(tkn Token, lst map[Name]Token) Token {
 	}
 	return tkn
 }
+
+func Hard(tkn Token) Token {
+	switch tkn.Kind {
+	case List:
+		l := tkn.Text.([]Token)
+		x := make([]Token, len(l))
+		for i, t := range l {
+			x[i] = Hard(t)
+		}
+		return Token{List, x}
+	case Label:
+		t, ok := Global.env[tkn.Text.(Name)]
+		if ok {
+			return t
+		}
+	}
+	return tkn
+}

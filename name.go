@@ -137,4 +137,14 @@ func init() {
 		}
 		return None, nil
 	})
+	Add("solid", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 1 {
+			return None, ErrParaNum
+		}
+		ans, err := p.Exec(t[0])
+		if err != nil {
+			return None, err
+		}
+		return Hard(ans), nil
+	})
 }
