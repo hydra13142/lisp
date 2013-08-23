@@ -1,6 +1,12 @@
 package lisp
 
 func init() {
+	Add("none", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 0 {
+			return None, ErrParaNum
+		}
+		return Token{}, nil
+	})
 	Add("quote", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum

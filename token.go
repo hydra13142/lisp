@@ -28,6 +28,8 @@ func (t *Token) Eq(p *Token) bool {
 		return false
 	}
 	switch t.Kind {
+	case Null:
+		return true
 	case Int:
 		return t.Text.(int64) == p.Text.(int64)
 	case Float:
@@ -118,5 +120,8 @@ func (t *Token) Cmp(p *Token) int {
 }
 
 func (t Token) String() string {
+	if t.Kind == Null {
+		return ""
+	}
 	return fmt.Sprint(t.Text)
 }

@@ -37,24 +37,24 @@ func IO() {
 		}
 		return p.Load(t[0].Text.(string))
 	})
-	Add("print", func(t []Token, p *Lisp) (Token, error) {
+	Add("print", func(t []Token, p *Lisp) (x Token, y error) {
 		for _, i := range t {
-			x, y := p.Exec(i)
+			x, y = p.Exec(i)
 			if y != nil {
 				return None, y
 			}
 			fmt.Print(x)
 		}
-		return None, nil
+		return x, nil
 	})
-	Add("println", func(t []Token, p *Lisp) (Token, error) {
+	Add("println", func(t []Token, p *Lisp) (x Token, y error) {
 		for _, i := range t {
-			x, y := p.Exec(i)
+			x, y = p.Exec(i)
 			if y != nil {
 				return None, y
 			}
 			fmt.Println(x)
 		}
-		return None, nil
+		return x, nil
 	})
 }
