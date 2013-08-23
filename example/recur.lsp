@@ -1,6 +1,6 @@
 (define
 	lambda
-	(stable
+	(solid
 		(define
 			'(recur p c)
 			(lambda
