@@ -74,8 +74,8 @@ func init() {
 				u[i] = j
 			}
 			ans = Token{Front, Lfac{x[1:], b.Text.([]Token), u}}
-			u[Name("self")] = ans
 			p.env[x[0]] = ans
+			u[x[0]] = ans
 			return ans, nil
 		}
 		return None, ErrFitType

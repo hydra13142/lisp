@@ -7,16 +7,13 @@ func init() {
 		}
 		return Token{}, nil
 	})
-	Add("eval", func(t []Token, p *Lisp) (ans Token, err error) {
+	Add("eval", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		ans = t[0]
-		if ans.Kind == Label {
-			ans, err = p.Exec(ans)
-			if err != nil {
-				return None, err
-			}
+		ans, err := p.Exec(t[0])
+		if err != nil {
+			return None, err
 		}
 		return p.Exec(ans)
 	})
