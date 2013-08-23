@@ -13,7 +13,7 @@
 				(1
 					(each
 						(define x (car n))
-						(define y (self (cdr n) m))
+						(define y (min (cdr n) m))
 						(define z (car y))
 						(cond
 							((<= x z)
@@ -34,7 +34,7 @@
 			(1
 				(each
 					(define s (min l ()))
-					(cons (car s) (self (cdr s)))
+					(cons (car s) (maopao (cdr s)))
 				)
 			)
 		)

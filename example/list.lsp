@@ -5,7 +5,7 @@
 			0
 		)
 		(1
-			(+ (self (cdr l)) 1)
+			(+ (len (cdr l)) 1)
 		)
 	)
 )
@@ -19,7 +19,7 @@
 			(car l)
 		)
 		(1
-			(self (cdr l) (- n 1))
+			(index (cdr l) (- n 1))
 		)
 	)
 )
@@ -33,7 +33,7 @@
 					c
 				)
 				(1
-					(self
+					(rev
 						(cdr s)
 						(cons (car s) c)
 					)
@@ -53,13 +53,13 @@
 					c
 				)
 				((f (car s))
-					(self
+					(pick
 						(cdr s)
 						(cons (car s) c)
 					)
 				)
 				(1
-					(self (cdr s) c)
+					(pick (cdr s) c)
 				)
 			)
 		)
@@ -76,7 +76,7 @@
 					c
 				)
 				(1
-					(self
+					(change
 						(cdr s)
 						(cons (f (car s)) c)
 					)
@@ -92,7 +92,7 @@
 		((< a b)
 			(cons
 				a
-				(self (+ a 1) b)
+				(range (+ a 1) b)
 			)
 		)
 		(1 '())
@@ -128,7 +128,7 @@
 						(lambda (x) (> x n))
 					)
 				)
-				(+ (+ (self a) b) (self c))
+				(+ (+ (quicksort a) b) (quicksort c))
 			)
 		)
 	)
