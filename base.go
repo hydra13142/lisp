@@ -12,7 +12,7 @@ type Name string
 
 type Gfac func([]Token, *Lisp) (Token, error)
 
-type Macr struct {
+type Hong struct {
 	Para []Name
 	Text []Token
 }
@@ -84,7 +84,7 @@ func (t Kind) String() string {
 	return "unknown"
 }
 
-func (m Macr) String() string {
+func (m Hong) String() string {
 	return fmt.Sprintf("{macro : (%v,%v)}", m.Para, m.Text)
 }
 

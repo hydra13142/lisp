@@ -55,7 +55,7 @@ func init() {
 		}
 		switch x.Kind {
 		case Front:
-			f := x.Text.(Lfac)
+			f := x.Text.(*Lfac)
 			n := f.Para
 			if len(n) < len(t)-1 {
 				return None, ErrParaNum
@@ -89,7 +89,7 @@ func init() {
 				return q.Exec(Token{List, f.Text})
 			})}, nil
 		case Macro:
-			g := x.Text.(Macr)
+			g := x.Text.(*Hong)
 			n := g.Para
 			if len(n) < len(t)-1 {
 				return None, ErrParaNum
@@ -120,7 +120,7 @@ func init() {
 		}
 		switch x.Kind {
 		case Front:
-			f := x.Text.(Lfac)
+			f := x.Text.(*Lfac)
 			n := f.Para
 			return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
 				q := &Lisp{dad: p2, env: map[Name]Token{}}

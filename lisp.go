@@ -75,7 +75,7 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 		case Back:
 			return ct.Text.(Gfac)(ls[1:], l)
 		case Macro:
-			mp := ct.Text.(Macr)
+			mp := ct.Text.(*Hong)
 			if len(ls) != len(mp.Para)+1 {
 				return None, ErrParaNum
 			}
@@ -85,7 +85,7 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 			}
 			return l.Exec(Repl(Token{List, mp.Text}, xp))
 		case Front:
-			lp := ct.Text.(Lfac)
+			lp := ct.Text.(*Lfac)
 			if len(ls) != len(lp.Para)+1 {
 				return None, ErrParaNum
 			}

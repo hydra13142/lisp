@@ -118,21 +118,21 @@ func Hard(tkn Token) Token {
 			return t
 		}
 	case Macro:
-		m := tkn.Text.(Macr)
+		m := tkn.Text.(*Hong)
 		l := m.Text
 		x := make([]Token, len(l))
 		for i, t := range l {
 			x[i] = Hard(t)
 		}
-		return Token{Macro, Macr{m.Para, x}}
+		return Token{Macro, &Hong{m.Para, x}}
 	case Front:
-		f := tkn.Text.(Lfac)
+		f := tkn.Text.(*Lfac)
 		l := f.Text
 		x := make([]Token, len(l))
 		for i, t := range l {
 			x[i] = Hard(t)
 		}
-		return Token{Macro, Lfac{f.Para, x, f.Make}}
+		return Token{Front, &Lfac{f.Para, x, f.Make}}
 	}
 	return tkn
 }

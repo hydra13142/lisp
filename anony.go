@@ -20,7 +20,7 @@ func init() {
 			}
 			x[i] = c.Text.(Name)
 		}
-		ans = Token{Macro, Macr{x, b.Text.([]Token)}}
+		ans = Token{Macro, &Hong{x, b.Text.([]Token)}}
 		return ans, nil
 	})
 	Add("lambda", func(t []Token, p *Lisp) (ans Token, err error) {
@@ -46,7 +46,7 @@ func init() {
 		for i, j := range p.env {
 			u[i] = j
 		}
-		ans = Token{Front, Lfac{x, b.Text.([]Token), u}}
+		ans = Token{Front, &Lfac{x, b.Text.([]Token), u}}
 		u[Name("self")] = ans
 		return ans, nil
 	})

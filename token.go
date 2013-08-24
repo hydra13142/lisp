@@ -45,8 +45,8 @@ func (t *Token) Eq(p *Token) bool {
 	case Label:
 		return t.Text.(Name) == p.Text.(Name)
 	case Front:
-		x := t.Text.(Lfac).Make
-		y := p.Text.(Lfac).Make
+		x := t.Text.(*Lfac).Make
+		y := p.Text.(*Lfac).Make
 		m, n := len(x), len(y)
 		if m != n {
 			return false
@@ -60,11 +60,11 @@ func (t *Token) Eq(p *Token) bool {
 				return false
 			}
 		}
-		a, b = t.Text.(Lfac).Text, p.Text.(Lfac).Text
-		c, d = t.Text.(Lfac).Para, p.Text.(Lfac).Para
+		a, b = t.Text.(*Lfac).Text, p.Text.(*Lfac).Text
+		c, d = t.Text.(*Lfac).Para, p.Text.(*Lfac).Para
 	case Macro:
-		a, b = t.Text.(Macr).Text, p.Text.(Macr).Text
-		c, d = t.Text.(Macr).Para, p.Text.(Macr).Para
+		a, b = t.Text.(*Hong).Text, p.Text.(*Hong).Text
+		c, d = t.Text.(*Hong).Para, p.Text.(*Hong).Para
 	case Fold, List:
 		a, b = t.Text.([]Token), p.Text.([]Token)
 	}

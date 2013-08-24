@@ -49,7 +49,7 @@ func init() {
 				}
 				x[i] = c.Text.(Name)
 			}
-			ans = Token{Macro, Macr{x[1:], b.Text.([]Token)}}
+			ans = Token{Macro, &Hong{x[1:], b.Text.([]Token)}}
 			p.env[x[0]] = ans
 			return ans, nil
 		case List:
@@ -68,7 +68,7 @@ func init() {
 			for i, j := range p.env {
 				u[i] = j
 			}
-			ans = Token{Front, Lfac{x[1:], b.Text.([]Token), u}}
+			ans = Token{Front, &Lfac{x[1:], b.Text.([]Token), u}}
 			p.env[x[0]] = ans
 			u[x[0]] = ans
 			return ans, nil
