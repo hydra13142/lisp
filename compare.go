@@ -24,7 +24,7 @@ func init() {
 				if z := x.Cmp(&y); z > 0 {
 					return True, nil
 				} else {
-					return None, nil
+					return False, nil
 				}
 			}
 		}
@@ -52,7 +52,7 @@ func init() {
 				if z := x.Cmp(&y); z >= 0 {
 					return True, nil
 				} else {
-					return None, nil
+					return False, nil
 				}
 			}
 		}
@@ -80,7 +80,7 @@ func init() {
 				if z := x.Cmp(&y); z < 0 {
 					return True, nil
 				} else {
-					return None, nil
+					return False, nil
 				}
 			}
 		}
@@ -108,7 +108,7 @@ func init() {
 				if z := x.Cmp(&y); z <= 0 {
 					return True, nil
 				} else {
-					return None, nil
+					return False, nil
 				}
 			}
 		}
@@ -136,7 +136,7 @@ func init() {
 				if z := x.Cmp(&y); z == 0 {
 					return True, nil
 				} else {
-					return None, nil
+					return False, nil
 				}
 			}
 		}
@@ -164,7 +164,7 @@ func init() {
 				if z := x.Cmp(&y); z != 0 {
 					return True, nil
 				} else {
-					return None, nil
+					return False, nil
 				}
 			}
 		}

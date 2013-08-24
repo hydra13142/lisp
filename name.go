@@ -3,33 +3,6 @@ package lisp
 import "fmt"
 
 func init() {
-	Add("lambda", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) != 2 {
-			return None, ErrParaNum
-		}
-		a, b := t[0], t[1]
-		if a.Kind != List {
-			return None, ErrFitType
-		}
-		if b.Kind != List {
-			return None, ErrFitType
-		}
-		t = a.Text.([]Token)
-		x := make([]Name, 0, len(t))
-		for _, i := range t {
-			if i.Kind != Label {
-				return None, ErrNotName
-			}
-			x = append(x, i.Text.(Name))
-		}
-		u := make(map[Name]Token)
-		for i, j := range p.env {
-			u[i] = j
-		}
-		ans = Token{Front, Lfac{x, b.Text.([]Token), u}}
-		u[Name("self")] = ans
-		return ans, nil
-	})
 	Add("update", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
 			return None, ErrParaNum

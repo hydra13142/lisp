@@ -5,7 +5,7 @@ func init() {
 		if len(t) != 0 {
 			return None, ErrParaNum
 		}
-		return Token{}, nil
+		return None, nil
 	})
 	Add("eval", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
@@ -37,7 +37,7 @@ func init() {
 		if x.Kind != List || len(x.Text.([]Token)) == 0 {
 			return True, nil
 		} else {
-			return None, nil
+			return False, nil
 		}
 	})
 	Add("eq", func(t []Token, p *Lisp) (Token, error) {
@@ -58,7 +58,7 @@ func init() {
 		if x.Eq(&y) {
 			return True, nil
 		} else {
-			return None, nil
+			return False, nil
 		}
 	})
 	Add("car", func(t []Token, p *Lisp) (Token, error) {
@@ -135,7 +135,7 @@ func init() {
 			}
 			return None, ErrFitType
 		}
-		return Token{}, nil
+		return None, nil
 	})
 	Add("each", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) == 0 {

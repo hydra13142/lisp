@@ -40,8 +40,9 @@ const (
 var (
 	pattern = &parser.Pattern{}
 
-	True = Token{Int, int64(1)}
-	None = Token{List, []Token(nil)}
+	True  = Token{Int, int64(1)}
+	False = Token{List, []Token(nil)}
+	None  = Token{}
 
 	Global = &Lisp{env: map[Name]Token{}, dad: nil}
 
