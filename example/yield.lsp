@@ -1,4 +1,3 @@
-
 (define
 	(generator l)
 	(lambda
