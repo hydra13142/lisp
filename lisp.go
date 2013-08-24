@@ -55,13 +55,10 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 		ct = ls[0]
 		switch ct.Kind {
 		case Label:
-			for v := l; ; {
-				ct, ok = v.env[ls[0].Text.(Name)]
+			nm := ct.Text.(Name)
+			for v := l; v != nil; v = v.dad {
+				ct, ok = v.env[nm]
 				if ok {
-					break
-				}
-				v = v.dad
-				if v == nil {
 					break
 				}
 			}
@@ -89,13 +86,11 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 			return l.Exec(Repl(Token{List, mp.Text}, xp))
 		case Front:
 			lp := ct.Text.(Lfac)
-			q := &Lisp{dad: l, env: map[Name]Token{}}
 			if len(ls) != len(lp.Para)+1 {
 				return None, ErrParaNum
 			}
-			for m, n := range lp.Make {
-				q.env[m] = n
-			}
+			r := &Lisp{dad: l, env: lp.Make}
+			q := &Lisp{dad: r, env: map[Name]Token{}}
 			for i, t := range ls[1:] {
 				q.env[lp.Para[i]], err = l.Exec(t)
 				if err != nil {
@@ -105,9 +100,6 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 			ans, err = q.Exec(Token{Text: lp.Text, Kind: List})
 			if err != nil {
 				return None, err
-			}
-			for i, _ := range lp.Make {
-				lp.Make[i] = q.env[i]
 			}
 			return ans, nil
 		default:

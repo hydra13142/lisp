@@ -73,7 +73,7 @@
 	(init n)
 	(lambda
 		()
-		(define
+		(update
 			n
 			(+ n 1)
 		)

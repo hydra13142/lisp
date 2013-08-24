@@ -30,6 +30,28 @@ func init() {
 		u[Name("self")] = ans
 		return ans, nil
 	})
+	Add("update", func(t []Token, p *Lisp) (ans Token, err error) {
+		if len(t) != 2 {
+			return None, ErrParaNum
+		}
+		a, b := t[0], t[1]
+		if a.Kind != Label {
+			return None, ErrFitType
+		}
+		nm := a.Text.(Name)
+		for v := p; v != nil; v = v.dad {
+			_, ok := v.env[nm]
+			if ok {
+				ans, err = p.Exec(b)
+				if err != nil {
+					return None, err
+				}
+				v.env[nm] = ans
+				return ans, nil
+			}
+		}
+		return None, ErrNotFind
+	})
 	Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
 			return None, ErrParaNum

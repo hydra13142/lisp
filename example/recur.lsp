@@ -2,15 +2,12 @@
 	lambda
 	(solid
 		(define
-			'(recur p c)
+			'(_ p c)
 			(lambda
 				p
 				(eval
 					(cons
-						(define
-							this
-							(lambda p c)
-						)
+						(define this (lambda p c))
 						(quote p)
 					)
 				)

@@ -2,7 +2,7 @@ package lisp
 
 func init() {
 	Add("if", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) < 2 || len(t) >3 {
+		if len(t) < 2 || len(t) > 3 {
 			return None, ErrParaNum
 		}
 		ans, err := p.Exec(t[0])
@@ -11,16 +11,16 @@ func init() {
 		}
 		if ans.Bool() {
 			return p.Exec(t[1])
-		} 
+		}
 		if len(t) == 3 {
 			return p.Exec(t[2])
 		}
 		return Token{}, nil
 	})
 	Add("loop", func(t []Token, p *Lisp) (Token, error) {
-		var	(
+		var (
 			a, b Token
-			err error
+			err  error
 		)
 		if len(t) != 3 {
 			return None, ErrParaNum
