@@ -50,7 +50,7 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 	case List:
 		ls = f.Text.([]Token)
 		if len(ls) == 0 {
-			return None, nil
+			return False, nil
 		}
 		ct = ls[0]
 		switch ct.Kind {
