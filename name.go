@@ -3,28 +3,6 @@ package lisp
 import "fmt"
 
 func init() {
-	Add("update", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) != 2 {
-			return None, ErrParaNum
-		}
-		a, b := t[0], t[1]
-		if a.Kind != Label {
-			return None, ErrFitType
-		}
-		nm := a.Text.(Name)
-		for v := p; v != nil; v = v.dad {
-			_, ok := v.env[nm]
-			if ok {
-				ans, err = p.Exec(b)
-				if err != nil {
-					return None, err
-				}
-				v.env[nm] = ans
-				return ans, nil
-			}
-		}
-		return None, ErrNotFind
-	})
 	Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
@@ -37,11 +15,14 @@ func init() {
 				p.env[a.Text.(Name)] = ans
 			}
 			return ans, err
-		case Fold:
+		case Fold, List:
 			if b.Kind != List {
 				return None, ErrFitType
 			}
 			t = a.Text.([]Token)
+			if len(t) <= 0 {
+				return None, ErrParaNum
+			}
 			x := make([]Name, len(t))
 			for i, c := range t {
 				if c.Kind != Label {
@@ -49,31 +30,86 @@ func init() {
 				}
 				x[i] = c.Text.(Name)
 			}
-			ans = Token{Macro, &Hong{x[1:], b.Text.([]Token)}}
-			p.env[x[0]] = ans
-			return ans, nil
-		case List:
-			if b.Kind != List {
-				return None, ErrFitType
-			}
-			t = a.Text.([]Token)
-			x := make([]Name, len(t))
-			for i, c := range t {
-				if c.Kind != Label {
-					return None, ErrNotName
+			if a.Kind == Fold {
+				ans = Token{Macro, &Hong{x[1:], b.Text.([]Token)}}
+				p.env[x[0]] = ans
+				return ans, nil
+			} else {
+				u := make(map[Name]Token)
+				for i, j := range p.env {
+					u[i] = j
 				}
-				x[i] = c.Text.(Name)
+				ans = Token{Front, &Lfac{x[1:], b.Text.([]Token), u}}
+				u[Name("self")] = ans
+				p.env[x[0]] = ans
+				return ans, nil
 			}
-			u := make(map[Name]Token)
-			for i, j := range p.env {
-				u[i] = j
-			}
-			ans = Token{Front, &Lfac{x[1:], b.Text.([]Token), u}}
-			u[Name("self")] = ans
-			p.env[x[0]] = ans
-			return ans, nil
 		}
 		return None, ErrFitType
+	})
+	Add("update", func(t []Token, p *Lisp) (ans Token, err error) {
+		var (
+			a, b Token
+			n    Name
+		)
+		if len(t) != 2 {
+			return None, ErrParaNum
+		}
+		a, b = t[0], t[1]
+		switch a.Kind {
+		case Label:
+			n = a.Text.(Name)
+		case Fold, List:
+			if b.Kind != List {
+				return None, ErrFitType
+			}
+			t = a.Text.([]Token)
+			if len(t) <= 0 {
+				return None, ErrParaNum
+			}
+			n = t[0].Text.(Name)
+		default:
+			return None, ErrFitType
+		}
+		for v := p; p != Global; p = p.dad {
+			_, ok := p.env[n]
+			if ok {
+				if a.Kind == Label{
+					ans, err = p.Exec(b)
+					if err == nil {
+						p.env[n] = ans
+					}
+					return ans, err
+				} else {
+					x := make([]Name, len(t)-1)
+					for i, c := range t[1:] {
+						if c.Kind != Label {
+							return None, ErrNotName
+						}
+						x[i] = c.Text.(Name)
+					}
+					if a.Kind == Fold {
+						ans = Token{Macro, &Hong{x, b.Text.([]Token)}}
+						p.env[n] = ans
+						return ans, nil
+					} else {
+						u := make(map[Name]Token)
+						for i, j := range v.env {
+							u[i] = j
+						}
+						ans = Token{Front, &Lfac{x, b.Text.([]Token), u}}
+						u[Name("self")] = ans
+						p.env[n] = ans
+						return ans, nil
+					}
+				}
+			}
+		}
+		_, ok := p.env[n]
+		if !ok {
+			return None, ErrNotFind
+		}
+		return None, ErrRefused
 	})
 	Add("remove", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 1 {
@@ -83,27 +119,18 @@ func init() {
 			return None, ErrFitType
 		}
 		n := t[0].Text.(Name)
-		var v *Lisp
-		var ok bool
-		for v = p; ; {
-			_, ok = v.env[n]
+		for ; p != Global; p = p.dad {
+			_, ok := p.env[n]
 			if ok {
-				break
-			}
-			v = v.dad
-			if v == Global {
-				break
+				delete(p.env, n)
+				return None, nil
 			}
 		}
+		_, ok := p.env[n]
 		if !ok {
-			_, ok = v.env[n]
-			if !ok {
-				return None, ErrNotFind
-			}
-			return None, ErrRefused
+			return None, ErrNotFind
 		}
-		delete(v.env, n)
-		return None, nil
+		return None, ErrRefused
 	})
 	Add("clear", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 0 {
