@@ -33,20 +33,14 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 	case Fold:
 		return Token{List, f.Text.([]Token)}, nil
 	case Label:
-		for v := l; ; {
-			ct, ok = v.env[f.Text.(Name)]
+		nm := f.Text.(Name)
+		for ; l != nil; l = l.dad {
+			ct, ok = l.env[nm]
 			if ok {
-				break
-			}
-			v = v.dad
-			if v == nil {
-				break
+				return ct, nil
 			}
 		}
-		if !ok {
-			return None, ErrNotFind
-		}
-		return ct, nil
+		return None, ErrNotFind
 	case List:
 		ls = f.Text.([]Token)
 		if len(ls) == 0 {
@@ -97,7 +91,7 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 					return None, err
 				}
 			}
-			ans, err = q.Exec(Token{Text: lp.Text, Kind: List})
+			ans, err = q.Exec(Token{List, lp.Text})
 			if err != nil {
 				return None, err
 			}
