@@ -1,10 +1,9 @@
 (define
 	(fbnq n) # fbnq, a function which gain very quickly
-	(cond
-		((<= n 1)
-			1
-		)
-		(1
+	(if
+		(<= n 1)
+		1
+		(each
 			(loop
 				(each
 					(define i 0)
@@ -19,6 +18,7 @@
 					(define a c)
 				)
 			)
+			a
 		)
 	)
 )

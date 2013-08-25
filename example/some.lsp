@@ -3,9 +3,7 @@
 	(omission
 		(lambda
 			(x y)
-			(if
-				(atom y)
-				x
+			(each
 				(loop
 					()
 					(not (atom y))
@@ -15,6 +13,7 @@
 						(define x (+ x z))
 					)
 				)
+				x
 			)
 		)
 	)
@@ -24,9 +23,7 @@
 	(omission
 		(lambda
 			(x y)
-			(if
-				(atom y)
-				x
+			(each
 				(loop
 					()
 					(not (atom y))
@@ -36,10 +33,10 @@
 						(if
 							(< x z)
 							(define x z)
-							x
 						)
 					)
 				)
+				x
 			)
 		)
 	)
@@ -49,9 +46,7 @@
 	(omission
 		(lambda
 			(x y)
-			(if
-				(atom y)
-				x
+			(each
 				(loop
 					()
 					(not (atom y))
@@ -61,10 +56,10 @@
 						(if
 							(> x z)
 							(define x z)
-							x
 						)
 					)
 				)
+				x
 			)
 		)
 	)

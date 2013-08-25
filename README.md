@@ -33,6 +33,12 @@ a simple lisp made by go
 	loop 三个参数，第一个初始化，第二个判断，循环执行第三个，直到第二个判断为假
 
 	each 为顺序执行多个语句，最后一个语句的返回值作为返回值
+	
+		each 返回最后被执行的语句的值
+
+		if和cond也一样（if如果第二选项省略，判断又为假，返回none）
+
+		loop如果被正确执行，永远返回none
 
 	present 显示当前环境中的所有标签
 
@@ -99,9 +105,9 @@ Token为内部用来表示元素的类型
 		Text interface{}
 	}
 
-Text只可能装入如下类型：[]Token、int64、float64、string、Hong、Lfac、Gfac
+Text只可能装入如下类型：[]Token、int64、float64、string、Name、Hong、Lfac、Gfac
 
-对应的Kind值分别为如下：List、Int、Float、String、Macro、Front、Back
+对应的Kind值分别为如下：List、Int、Float、String、Macro、Label、Front、Back
 
 交互模式和lsp文件中都支持注释，只有一种注释形式：‘#’及该行剩余部分被忽略
 

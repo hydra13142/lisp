@@ -15,34 +15,30 @@ func init() {
 		if len(t) == 3 {
 			return p.Exec(t[2])
 		}
-		return Token{}, nil
+		return None, nil
 	})
 	Add("loop", func(t []Token, p *Lisp) (Token, error) {
-		var (
-			a, b Token
-			err  error
-		)
 		if len(t) != 3 {
 			return None, ErrParaNum
 		}
-		_, err = p.Exec(t[0])
+		_, err := p.Exec(t[0])
 		if err != nil {
 			return None, err
 		}
 		for {
-			a, err = p.Exec(t[1])
+			a, err := p.Exec(t[1])
 			if err != nil {
 				return None, err
 			}
 			if !a.Bool() {
 				break
 			}
-			b, err = p.Exec(t[2])
+			_, err = p.Exec(t[2])
 			if err != nil {
 				return None, err
 			}
 		}
-		return b, err
+		return None, nil
 	})
 	Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var (

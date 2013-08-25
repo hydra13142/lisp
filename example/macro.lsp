@@ -1,8 +1,8 @@
 (define
 	if
 	(default
-		(define
-			'(_ a b c)
+		(macro
+			(a b c)
 			(cond (a b) (1 c))
 		)
 		(none)
@@ -12,13 +12,12 @@
 	'(loop a b c)
 	(each
 		a
-		(cond
-			(b (none))
-			(1
-				(each
-					c
-					(loop () b c)
-				)
+		(if
+			b
+			(none)
+			(each
+				c
+				(loop () b c)
 			)
 		)
 	)
@@ -26,8 +25,8 @@
 (define
 	lambda
 	(solid
-		(define
-			'(_ p c)
+		(macro
+			(p c)
 			(lambda
 				p
 				(eval
