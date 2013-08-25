@@ -50,40 +50,6 @@ func init() {
 			return None, err
 		}
 		switch x.Kind {
-		case Front:
-			f := x.Text.(*Lfac)
-			n := f.Para
-			if len(n) < len(t)-1 {
-				return None, ErrParaNum
-			}
-			hold := make([]Token, 0, len(t)-1)
-			for _, z = range t[1:] {
-				y, err = p.Exec(z)
-				if err != nil {
-					return None, err
-				}
-				hold = append(hold, y)
-			}
-			return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
-				q := &Lisp{dad: p2, env: map[Name]Token{}}
-				if len(t2) > len(n) || len(t2)+len(hold) < len(n) {
-					return None, ErrParaNum
-				}
-				for m, n := range f.Make {
-					q.env[m] = n
-				}
-				for i, z := range t2 {
-					y, err = p.Exec(z)
-					if err != nil {
-						return None, err
-					}
-					q.env[n[i]] = y
-				}
-				for i, j := len(n)-1, 1; i >= len(t2); i, j = i-1, j+1 {
-					q.env[n[i]] = hold[len(hold)-j]
-				}
-				return q.Exec(Token{List, f.Text})
-			})}, nil
 		case Macro:
 			g := x.Text.(*Hong)
 			n := g.Para
@@ -101,6 +67,38 @@ func init() {
 				copy(m[len(t2)+1:], hold[len(t2)+len(hold)-len(n):])
 				return p2.Exec(Token{List, m})
 			})}, nil
+		case Front:
+			f := x.Text.(*Lfac)
+			n := f.Para
+			if len(n) < len(t)-1 {
+				return None, ErrParaNum
+			}
+			hold := make([]Token, 0, len(t)-1)
+			for _, z = range t[1:] {
+				y, err = p.Exec(z)
+				if err != nil {
+					return None, err
+				}
+				hold = append(hold, y)
+			}
+			return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
+				if len(t2) > len(n) || len(t2)+len(hold) < len(n) {
+					return None, ErrParaNum
+				}
+				r := &Lisp{dad: p2, env: f.Make}
+				q := &Lisp{dad: r, env: map[Name]Token{}}
+				for i, z := range t2 {
+					y, err = p.Exec(z)
+					if err != nil {
+						return None, err
+					}
+					q.env[n[i]] = y
+				}
+				for i, j := len(n)-1, 1; i >= len(t2); i, j = i-1, j+1 {
+					q.env[n[i]] = hold[len(hold)-j]
+				}
+				return q.Exec(Token{List, f.Text})
+			})}, nil
 		}
 		return None, ErrFitType
 	})
@@ -114,18 +112,15 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		switch x.Kind {
-		case Front:
+		if x.Kind == Front {
 			f := x.Text.(*Lfac)
 			n := f.Para
 			return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
-				q := &Lisp{dad: p2, env: map[Name]Token{}}
 				if len(t2) < len(n)-1 {
 					return None, ErrParaNum
 				}
-				for m, n := range f.Make {
-					q.env[m] = n
-				}
+				r := &Lisp{dad: p2, env: f.Make}
+				q := &Lisp{dad: r, env: map[Name]Token{}}
 				for i := len(n) - 2; i >= 0; i-- {
 					y, err = p.Exec(t2[i])
 					if err != nil {
