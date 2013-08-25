@@ -13,11 +13,11 @@
 	(each
 		(if
 			b
-			(none)
 			(each
 				c
 				(while b c)
 			)
+			(none)
 		)
 	)
 )
