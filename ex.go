@@ -17,6 +17,25 @@ func init() {
 		}
 		return None, nil
 	})
+	Add("while", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 2 {
+			return None, ErrParaNum
+		}
+		for {
+			a, err := p.Exec(t[0])
+			if err != nil {
+				return None, err
+			}
+			if !a.Bool() {
+				break
+			}
+			_, err = p.Exec(t[1])
+			if err != nil {
+				return None, err
+			}
+		}
+		return None, nil
+	})
 	Add("loop", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 3 {
 			return None, ErrParaNum

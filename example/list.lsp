@@ -13,17 +13,23 @@
 #
 # loop的宏版本实现，使用了宏的递归，each表示依次执行，最后一个作为返回
 #  |(define
-#  |	'(loop a b c)
+#  |	'(while b c)
 #  |	(each
-#  |		a
 #  |		(if
 #  |			b
 #  |			(none)
 #  |			(each
 #  |				c
-#  |				(loop () b c) # 宏用法和函数一样
+#  |				(while b c) # 宏用法和函数一样
 #  |			)
 #  |		)
+#  |	)
+#  |)
+#  |(define
+#  |	'(loop a b c)
+#  |	(each
+#  |		a
+#  |		(while b c)
 #  |	)
 #  |)
 #

@@ -9,17 +9,23 @@
 	)
 )
 (define
-	'(loop a b c)
+	'(while b c)
 	(each
-		a
 		(if
 			b
 			(none)
 			(each
 				c
-				(loop () b c)
+				(while b c)
 			)
 		)
+	)
+)
+(define
+	'(loop a b c)
+	(each
+		a
+		(while b c)
 	)
 )
 (define
