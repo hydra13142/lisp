@@ -24,16 +24,14 @@
 )
 (define
 	lambda
-	(solid
-		(macro
-			(p c)
-			(lambda
-				p
-				(eval
-					(cons
-						(define this (lambda p c))
-						(quote p)
-					)
+	(macro
+		(p c)
+		((builtin lambda)
+			p
+			(eval
+				(cons
+					(define this ((builtin lambda) p c))
+					(quote p)
 				)
 			)
 		)

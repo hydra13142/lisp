@@ -159,14 +159,17 @@ func init() {
 		}
 		return None, nil
 	})
-	Add("solid", func(t []Token, p *Lisp) (Token, error) {
+	Add("builtin", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		ans, err := p.Exec(t[0])
-		if err != nil {
-			return None, err
+		if t[0].Kind != Label {
+			return None, ErrFitType
 		}
-		return Hard(ans), nil
+		ans, ok := Global.env[t[0].Text.(Name)]
+		if !ok {
+			return None, ErrNotFind
+		}
+		return ans, nil
 	})
 }
