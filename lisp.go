@@ -83,19 +83,15 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 			if len(ls) != len(lp.Para)+1 {
 				return None, ErrParaNum
 			}
-			r := &Lisp{dad: l, env: lp.Make}
-			q := &Lisp{dad: r, env: map[Name]Token{}}
+			q := &Lisp{dad: lp.Make, env: map[Name]Token{}}
+			q.env[Name("self")] = ct
 			for i, t := range ls[1:] {
 				q.env[lp.Para[i]], err = l.Exec(t)
 				if err != nil {
 					return None, err
 				}
 			}
-			ans, err = q.Exec(Token{List, lp.Text})
-			if err != nil {
-				return None, err
-			}
-			return ans, nil
+			return q.Exec(Token{List, lp.Text})
 		default:
 			return None, ErrNotFunc
 		}

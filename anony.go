@@ -42,12 +42,7 @@ func init() {
 			}
 			x = append(x, i.Text.(Name))
 		}
-		u := make(map[Name]Token)
-		for i, j := range p.env {
-			u[i] = j
-		}
-		ans = Token{Front, &Lfac{x, b.Text.([]Token), u}}
-		u[Name("self")] = ans
+		ans = Token{Front, &Lfac{x, b.Text.([]Token), p}}
 		return ans, nil
 	})
 }

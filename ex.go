@@ -104,8 +104,7 @@ func init() {
 				if len(t2) > len(n) || len(t2)+len(hold) < len(n) {
 					return None, ErrParaNum
 				}
-				r := &Lisp{dad: p2, env: f.Make}
-				q := &Lisp{dad: r, env: map[Name]Token{}}
+				q := &Lisp{dad: f.Make, env: map[Name]Token{}}
 				for i, z := range t2 {
 					y, err = p.Exec(z)
 					if err != nil {
@@ -138,8 +137,7 @@ func init() {
 				if len(t2) < len(n)-1 {
 					return None, ErrParaNum
 				}
-				r := &Lisp{dad: p2, env: f.Make}
-				q := &Lisp{dad: r, env: map[Name]Token{}}
+				q := &Lisp{dad: f.Make, env: map[Name]Token{}}
 				for i := len(n) - 2; i >= 0; i-- {
 					y, err = p.Exec(t2[i])
 					if err != nil {

@@ -35,12 +35,7 @@ func init() {
 				p.env[x[0]] = ans
 				return ans, nil
 			} else {
-				u := make(map[Name]Token)
-				for i, j := range p.env {
-					u[i] = j
-				}
-				ans = Token{Front, &Lfac{x[1:], b.Text.([]Token), u}}
-				u[Name("self")] = ans
+				ans = Token{Front, &Lfac{x[1:], b.Text.([]Token), p}}
 				p.env[x[0]] = ans
 				return ans, nil
 			}
@@ -93,13 +88,8 @@ func init() {
 						p.env[n] = ans
 						return ans, nil
 					} else {
-						u := make(map[Name]Token)
-						for i, j := range v.env {
-							u[i] = j
-						}
-						ans = Token{Front, &Lfac{x, b.Text.([]Token), u}}
-						u[Name("self")] = ans
-						p.env[n] = ans
+						ans = Token{Front, &Lfac{x, b.Text.([]Token), p}}
+						v.env[n] = ans
 						return ans, nil
 					}
 				}

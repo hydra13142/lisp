@@ -20,7 +20,7 @@ type Hong struct {
 type Lfac struct {
 	Para []Name
 	Text []Token
-	Make map[Name]Token
+	Make *Lisp
 }
 
 const (

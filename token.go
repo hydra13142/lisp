@@ -45,20 +45,8 @@ func (t *Token) Eq(p *Token) bool {
 	case Label:
 		return t.Text.(Name) == p.Text.(Name)
 	case Front:
-		x := t.Text.(*Lfac).Make
-		y := p.Text.(*Lfac).Make
-		m, n := len(x), len(y)
-		if m != n {
+		if t.Text.(*Lfac).Make != p.Text.(*Lfac).Make {
 			return false
-		}
-		for i, j := range x {
-			k, v := y[i]
-			if !v {
-				return false
-			}
-			if !j.Eq(&k) {
-				return false
-			}
 		}
 		a, b = t.Text.(*Lfac).Text, p.Text.(*Lfac).Text
 		c, d = t.Text.(*Lfac).Para, p.Text.(*Lfac).Para
