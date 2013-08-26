@@ -1,10 +1,55 @@
 package lisp
 
 func init() {
+	Add("pretreat", func(t []Token, p *Lisp) (Token, error) {
+		var (
+			x, y Token
+			err  error
+		)
+		x, err = p.Exec(t[0])
+		if err != nil {
+			return None, err
+		}
+		if x.Kind == Macro {
+			f := x.Text.(*Hong)
+			n := f.Para
+			if len(n) != len(t)-1 {
+				return None, ErrParaNum
+			}
+			hold := make([]bool, len(n))
+			for i, z := range t[1:] {
+				y, err = p.Exec(z)
+				if err != nil {
+					return None, err
+				}
+				hold[i] = y.Bool()
+			}
+			return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
+				if len(t2) != len(n) {
+					return None, ErrParaNum
+				}
+				m := make([]Token, len(n)+1)
+				m[0] = x
+				for i, t := range hold {
+					if t {
+						u, err := p.Exec(t2[i])
+						if err != nil {
+							return None, err
+						}
+						m[i+1] = u
+					} else {
+						m[i+1] = t2[i]
+					}
+				}
+				return p2.Exec(Token{List, m})
+			})}, nil
+		}
+		return None, ErrFitType
+	})
 	Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var (
-			x, y, z Token
-			err     error
+			x, y Token
+			err  error
 		)
 		x, err = p.Exec(t[0])
 		if err != nil {
@@ -34,13 +79,13 @@ func init() {
 			if len(n) < len(t)-1 {
 				return None, ErrParaNum
 			}
-			hold := make([]Token, 0, len(t)-1)
-			for _, z = range t[1:] {
+			hold := make([]Token, len(t)-1)
+			for i, z := range t[1:] {
 				y, err = p.Exec(z)
 				if err != nil {
 					return None, err
 				}
-				hold = append(hold, y)
+				hold[i] = y
 			}
 			return Token{Back, Gfac(func(t2 []Token, p2 *Lisp) (Token, error) {
 				if len(t2) > len(n) || len(t2)+len(hold) < len(n) {
@@ -63,8 +108,10 @@ func init() {
 		return None, ErrFitType
 	})
 	Add("omission", func(t []Token, p *Lisp) (Token, error) {
-		var x, y Token
-		var err error
+		var (
+			x, y Token
+			err  error
+		)
 		if len(t) != 1 {
 			return None, ErrParaNum
 		}
