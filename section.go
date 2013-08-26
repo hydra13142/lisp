@@ -1,12 +1,12 @@
 package lisp
 
-type block struct {
+type section struct {
 	quote bool
 	count int
 	total string
 }
 
-func (b *block) feed(s []byte) error {
+func (b *section) feed(s []byte) error {
 	single := false
 	for i, l := 0, len(s); i < l; i++ {
 		if b.quote {
@@ -52,6 +52,6 @@ func (b *block) feed(s []byte) error {
 	return nil
 }
 
-func (b *block) over() bool {
+func (b *section) over() bool {
 	return b.count == 0 && b.quote == false
 }

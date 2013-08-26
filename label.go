@@ -1,8 +1,19 @@
 package lisp
 
-import "fmt"
-
 func init() {
+	Add("builtin", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 1 {
+			return None, ErrParaNum
+		}
+		if t[0].Kind != Label {
+			return None, ErrFitType
+		}
+		ans, ok := Global.env[t[0].Text.(Name)]
+		if !ok {
+			return None, ErrNotFind
+		}
+		return ans, nil
+	})
 	Add("define", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 2 {
 			return None, ErrParaNum
@@ -69,7 +80,7 @@ func init() {
 		for v := p; p != Global; p = p.dad {
 			_, ok := p.env[n]
 			if ok {
-				if a.Kind == Label{
+				if a.Kind == Label {
 					ans, err = p.Exec(b)
 					if err == nil {
 						p.env[n] = ans
@@ -122,44 +133,33 @@ func init() {
 		}
 		return None, ErrRefused
 	})
+	Add("present", func(t []Token, p *Lisp) (ans Token, err error) {
+		if len(t) != 0 {
+			return None, ErrParaNum
+		}
+		x := make([]Token, 0, len(p.env))
+		for i, _ := range p.env {
+			x = append(x, Token{Label, i})
+		}
+		return Token{List, x}, nil
+	})
+	Add("context", func(t []Token, p *Lisp) (ans Token, err error) {
+		if len(t) != 0 {
+			return None, ErrParaNum
+		}
+		x := make([]Token, 0, 128)
+		for v := p; v != nil; v = v.dad {
+			for i, _ := range v.env {
+				x = append(x, Token{Label, i})
+			}
+		}
+		return Token{List, x}, nil
+	})
 	Add("clear", func(t []Token, p *Lisp) (ans Token, err error) {
 		if len(t) != 0 {
 			return None, ErrParaNum
 		}
 		p.env = map[Name]Token{}
 		return None, nil
-	})
-	Add("present", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) != 0 {
-			return None, ErrParaNum
-		}
-		for i, _ := range p.env {
-			fmt.Println(string(i))
-		}
-		return None, nil
-	})
-	Add("context", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) != 0 {
-			return None, ErrParaNum
-		}
-		for v := p; v != nil; v = v.dad {
-			for i, _ := range v.env {
-				fmt.Println(string(i))
-			}
-		}
-		return None, nil
-	})
-	Add("builtin", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) != 1 {
-			return None, ErrParaNum
-		}
-		if t[0].Kind != Label {
-			return None, ErrFitType
-		}
-		ans, ok := Global.env[t[0].Text.(Name)]
-		if !ok {
-			return None, ErrNotFind
-		}
-		return ans, nil
 	})
 }

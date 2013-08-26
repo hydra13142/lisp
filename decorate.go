@@ -1,64 +1,6 @@
 package lisp
 
 func init() {
-	Add("if", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) < 2 || len(t) > 3 {
-			return None, ErrParaNum
-		}
-		ans, err := p.Exec(t[0])
-		if err != nil {
-			return None, err
-		}
-		if ans.Bool() {
-			return p.Exec(t[1])
-		}
-		if len(t) == 3 {
-			return p.Exec(t[2])
-		}
-		return None, nil
-	})
-	Add("while", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) != 2 {
-			return None, ErrParaNum
-		}
-		for {
-			a, err := p.Exec(t[0])
-			if err != nil {
-				return None, err
-			}
-			if !a.Bool() {
-				break
-			}
-			_, err = p.Exec(t[1])
-			if err != nil {
-				return None, err
-			}
-		}
-		return None, nil
-	})
-	Add("loop", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) != 3 {
-			return None, ErrParaNum
-		}
-		_, err := p.Exec(t[0])
-		if err != nil {
-			return None, err
-		}
-		for {
-			a, err := p.Exec(t[1])
-			if err != nil {
-				return None, err
-			}
-			if !a.Bool() {
-				break
-			}
-			_, err = p.Exec(t[2])
-			if err != nil {
-				return None, err
-			}
-		}
-		return None, nil
-	})
 	Add("default", func(t []Token, p *Lisp) (Token, error) {
 		var (
 			x, y, z Token

@@ -141,7 +141,7 @@ func (l *Lisp) Load(s string) (Token, error) {
 		return None, err
 	}
 	buf := bytes.NewBuffer(data)
-	one := block{}
+	one := section{}
 	for {
 		data, err := buf.ReadBytes('\n')
 		if err != nil {

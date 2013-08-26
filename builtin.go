@@ -7,25 +7,6 @@ func init() {
 		}
 		return None, nil
 	})
-	Add("eval", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) != 1 {
-			return None, ErrParaNum
-		}
-		ans, err := p.Exec(t[0])
-		if err != nil {
-			return None, err
-		}
-		return p.Exec(ans)
-	})
-	Add("quote", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) != 1 {
-			return None, ErrParaNum
-		}
-		if t[0].Kind == Label {
-			return p.Exec(t[0])
-		}
-		return t[0], nil
-	})
 	Add("atom", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {
 			return None, ErrParaNum
@@ -114,39 +95,23 @@ func init() {
 		}
 		return None, ErrFitType
 	})
-	Add("cond", func(t []Token, p *Lisp) (Token, error) {
-		if len(t) == 0 {
+	Add("eval", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		for _, i := range t {
-			if i.Kind == List {
-				t := i.Text.([]Token)
-				if len(t) == 2 {
-					ans, err := p.Exec(t[0])
-					if err != nil {
-						return None, err
-					}
-					if ans.Bool() {
-						return p.Exec(t[1])
-					}
-					continue
-				}
-				return None, ErrParaNum
-			}
-			return None, ErrFitType
+		ans, err := p.Exec(t[0])
+		if err != nil {
+			return None, err
 		}
-		return None, nil
+		return p.Exec(ans)
 	})
-	Add("each", func(t []Token, p *Lisp) (ans Token, err error) {
-		if len(t) == 0 {
+	Add("quote", func(t []Token, p *Lisp) (Token, error) {
+		if len(t) != 1 {
 			return None, ErrParaNum
 		}
-		for _, i := range t {
-			ans, err = p.Exec(i)
-			if err != nil {
-				break
-			}
+		if t[0].Kind == Label {
+			return p.Exec(t[0])
 		}
-		return ans, err
+		return t[0], nil
 	})
 }

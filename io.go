@@ -12,7 +12,7 @@ func init() {
 			return None, ErrParaNum
 		}
 		buf := bufio.NewReader(os.Stdin)
-		one := block{}
+		one := section{}
 		for {
 			data, err := buf.ReadBytes('\n')
 			if err != nil {

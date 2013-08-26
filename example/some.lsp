@@ -64,15 +64,5 @@
 		)
 	)
 )
-(define
-	(init n)
-	(lambda
-		()
-		(update
-			n
-			(+ n 1)
-		)
-	)
-)
 (quote "ok")
 

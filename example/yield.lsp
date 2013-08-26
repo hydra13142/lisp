@@ -1,4 +1,34 @@
 (define
+	(unlimit n)
+	(each
+		(define n (- n 1))
+		(lambda
+			()
+			(update
+				n
+				(+ n 1)
+			)
+		)
+	)
+)
+(define
+	(xrange a b)
+	(each
+		(define a (- a 1))
+		(lambda
+			()
+			(each
+				(update a (+ a 1))
+				(if
+					(< a b)
+					a
+					(raise "nothing to yield")
+				)
+			)
+		)
+	)
+)
+(define
 	(generator l)
 	(lambda
 		()
@@ -47,3 +77,4 @@
 		)
 	)
 )
+(quote "ok")

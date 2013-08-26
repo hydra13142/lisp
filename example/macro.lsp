@@ -22,10 +22,38 @@
 	)
 )
 (define
+	'(until b c)
+	(each
+		(if
+			b
+			(none)
+			(each
+				c
+				(until b c)
+			)
+		)
+	)
+)
+(define
 	'(loop a b c)
 	(each
 		a
 		(while b c)
+	)
+)
+(define
+	'(for a b c)
+	(lambda
+		()
+		(each
+			(define _ b)
+			(until
+				(catch
+					(define a (_))
+				)
+				c
+			)
+		)
 	)
 )
 (define
