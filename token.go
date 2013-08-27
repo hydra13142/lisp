@@ -9,16 +9,18 @@ type Token struct {
 
 func (t *Token) Bool() bool {
 	switch t.Kind {
+	case Null:
+		return false
 	case Int:
 		return t.Text.(int64) != 0
 	case Float:
 		return t.Text.(float64) != 0
 	case String:
 		return t.Text.(string) != ""
+	case Chan:
+		return len(t.Text.(chan Token)) != 0
 	case List:
 		return len(t.Text.([]Token)) != 0
-	case Null:
-		return false
 	}
 	return true
 }
@@ -40,7 +42,7 @@ func (t *Token) Eq(p *Token) bool {
 		return t.Text.(float64) == p.Text.(float64)
 	case String:
 		return t.Text.(string) == p.Text.(string)
-	case Back:
+	case Back, Chan:
 		return false
 	case Label:
 		return t.Text.(Name) == p.Text.(Name)
@@ -145,8 +147,12 @@ func (t *Token) Cmp(p *Token) int {
 }
 
 func (t Token) String() string {
-	if t.Kind == Null {
+	switch t.Kind {
+	case Null:
 		return ""
+	case Chan:
+		return "channel"
+	default:
+		return fmt.Sprint(t.Text)
 	}
-	return fmt.Sprint(t.Text)
 }

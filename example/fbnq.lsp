@@ -1,5 +1,5 @@
 (define
-	(fbnq n) # fbnq, a function which gain very quickly
+	(fbnq n)
 	(if
 		(<= n 1)
 		1

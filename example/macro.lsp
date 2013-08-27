@@ -9,51 +9,62 @@
 	)
 )
 (define
-	'(while b c)
-	(each
-		(if
-			b
-			(each
-				c
-				(while b c)
-			)
-			(none)
-		)
-	)
-)
-(define
-	'(until b c)
-	(each
-		(if
-			b
-			(none)
-			(each
-				c
-				(until b c)
-			)
-		)
-	)
-)
-(define
-	'(loop a b c)
-	(each
-		a
-		(while b c)
-	)
-)
-(define
-	'(for a b c)
-	(lambda
-		()
+	while
+	(macro
+		(b c)
 		(each
-			(define _ b)
+			(if
+				b
+				(each
+					c
+					(while b c)
+				)
+				(none)
+			)
+		)
+	)
+)
+(define
+	until
+	(macro
+		(b c)
+		(each
+			(if
+				b
+				(none)
+				(each
+					c
+					(until b c)
+				)
+			)
+		)
+	)
+)
+(define
+	loop
+	(macro
+		(a b c)
+		(each
+			a
+			(while b c)
+		)
+	)
+)
+(define
+	for
+	(pretreat
+		(macro
+			(a b c)
 			(until
 				(catch
-					(define a (_))
+					(define a (b))
 				)
 				c
 			)
 		)
+		0
+		1
+		0
 	)
 )
 (define
@@ -62,10 +73,19 @@
 		(p c)
 		((builtin lambda)
 			p
-			(eval
-				(cons
-					(define this ((builtin lambda) p c))
-					(quote p)
+			(each
+				(define
+					this
+					((builtin lambda)
+						p
+						c
+					)
+				)
+				(eval
+					(cons
+						(quote this)
+						(quote p)
+					)
 				)
 			)
 		)

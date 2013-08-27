@@ -64,17 +64,15 @@ a simple lisp made by go
 
 	lambda 产生一个匿名函数
 
-	macro 产生一个匿名宏
+	macro 产生一个匿名宏，macro宏与define、update不同之处在于可以添加额外的替换对象
 
-	define 声明函数或者变量
-
-		(define f (+ 2 1))	   为声明一个变量f
-
-		(define (f x) (+ x 2)) 为声明一个函数f
-
-		(define '(f x) (+ x 2)) 为声明一个宏f
-
-		define定义的函数、变量、宏都是在当前环境下的
+	define 声明一个标签为变量或者函数，标签建立在当前环境下
+		
+		(define f 1)			声明一个变量
+		
+		(define (f n) (* n 2))	声明一个函数
+		
+		如果要声明一个变量为宏，需使用macro才行
 
 	update 用来更新一个标签的值，用法和lambda相同，但它只能更新已有的标签的值
 
@@ -101,6 +99,14 @@ a simple lisp made by go
 	error 打印可能的错误，并向外传递错误
 
 	catch 捕获错误并转化为字符串，否则返回一个空表
+	
+	chan 生成一个channel
+	
+	close 关闭一个channel
+	
+	go 在一个新的线程里执行语句
+	
+	channel可以像函数一样执行，如不提供参数为读取，可接受一个参数来写入
 
 可以通过Add方法添加自定义函数：
 

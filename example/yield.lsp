@@ -29,7 +29,7 @@
 	)
 )
 (define
-	(generator l)
+	(evary l)
 	(lambda
 		()
 		(if
@@ -39,6 +39,49 @@
 				(define y (car l))
 				(update l (cdr l))
 				y
+			)
+		)
+	)
+)
+(define
+	generator
+	(macro
+		(p q) # 输入的参数
+		(i o) # 表示额外的替换对象，将替换为随机不重名label
+		(define
+			p
+			(each
+				(define i (chan))
+				(define o (chan))
+				(define
+					(yield n)
+					(each
+						(o n)
+						(i)
+					)
+				)
+				(define p q)
+				(go
+					(each
+						(i)
+						p
+						(close i)
+						(close o)
+					)
+				)
+				(lambda
+					()
+					(if
+						(catch
+							(each
+								(i 1)
+								(define x (o))
+							)
+						)
+						(raise "nothing to yield")
+						x
+					)
+				)
 			)
 		)
 	)

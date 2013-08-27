@@ -15,6 +15,7 @@ type Gfac func([]Token, *Lisp) (Token, error)
 type Hong struct {
 	Para []Name
 	Text []Token
+	Real []Name
 }
 
 type Lfac struct {
@@ -28,6 +29,7 @@ const (
 	Int
 	Float
 	String
+	Chan
 	Fold
 	List
 	Back
@@ -56,6 +58,7 @@ var (
 	ErrIsEmpty = errors.New("Fold is empty")
 	ErrNotConv = errors.New("Cannot translate")
 	ErrRefused = errors.New("Can't remove a back function")
+	ErrIsClose = errors.New("Channel has been closed")
 )
 
 func (t Kind) String() string {
@@ -66,6 +69,8 @@ func (t Kind) String() string {
 		return "float"
 	case String:
 		return "string"
+	case Chan:
+		return "channel"
 	case Fold:
 		return "fold list"
 	case List:
@@ -85,9 +90,9 @@ func (t Kind) String() string {
 }
 
 func (m Hong) String() string {
-	return fmt.Sprintf("{macro : (%v,%v)}", m.Para, m.Text)
+	return fmt.Sprintf("{macro : %v | %v => %v}", m.Para, m.Real, m.Text)
 }
 
 func (l Lfac) String() string {
-	return fmt.Sprintf("{front : (%v,%v)}", l.Para, l.Text)
+	return fmt.Sprintf("{front : %v => %v}", l.Para, l.Text)
 }

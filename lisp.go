@@ -2,6 +2,8 @@ package lisp
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -66,6 +68,37 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 			}
 		}
 		switch ct.Kind {
+		case Chan:
+			switch len(ls) {
+			case 1:
+				u, ok := <-ct.Text.(chan Token)
+				if ok {
+					return u, nil
+				} else {
+					return None, ErrIsClose
+				}
+			case 2:
+				u, err := l.Exec(ls[1])
+				if err != nil {
+					return None, err
+				}
+				t := func() (s string) {
+					defer func() {
+						e := recover()
+						if e != nil {
+							s = fmt.Sprint(e)
+						}
+					}()
+					ct.Text.(chan Token) <- u
+					return
+				}()
+				if t != "" {
+					return None, errors.New(t)
+				}
+				return u, nil
+			default:
+				return None, ErrParaNum
+			}
 		case Back:
 			return ct.Text.(Gfac)(ls[1:], l)
 		case Macro:
@@ -76,6 +109,28 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 			xp := map[Name]Token{}
 			for i, t := range ls[1:] {
 				xp[mp.Para[i]] = t
+			}
+			if mp.Real == nil {
+				for i, t := range mp.Para {
+					xp[t] = ls[1+i]
+				}
+			} else {
+				cp := map[Name]bool{}
+				for i, t := range ls[1:] {
+					xp[mp.Para[i]] = t
+					Collect(cp, &t)
+				}
+				for _, t := range mp.Real {
+					var i Name
+					for {
+						i = TmpName()
+						_, ok := cp[i]
+						if !ok {
+							break
+						}
+					}
+					xp[t] = Token{Label, i}
+				}
 			}
 			return l.Exec(Repl(Token{List, mp.Text}, xp))
 		case Front:

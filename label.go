@@ -26,7 +26,7 @@ func init() {
 				p.env[a.Text.(Name)] = ans
 			}
 			return ans, err
-		case Fold, List:
+		case List:
 			if b.Kind != List {
 				return None, ErrFitType
 			}
@@ -41,31 +41,22 @@ func init() {
 				}
 				x[i] = c.Text.(Name)
 			}
-			if a.Kind == Fold {
-				ans = Token{Macro, &Hong{x[1:], b.Text.([]Token)}}
-				p.env[x[0]] = ans
-				return ans, nil
-			} else {
-				ans = Token{Front, &Lfac{x[1:], b.Text.([]Token), p}}
-				p.env[x[0]] = ans
-				return ans, nil
-			}
+			ans = Token{Front, &Lfac{x[1:], b.Text.([]Token), p}}
+			p.env[x[0]] = ans
+			return ans, nil
 		}
 		return None, ErrFitType
 	})
 	Add("update", func(t []Token, p *Lisp) (ans Token, err error) {
-		var (
-			a, b Token
-			n    Name
-		)
 		if len(t) != 2 {
 			return None, ErrParaNum
 		}
-		a, b = t[0], t[1]
+		a, b := t[0], t[1]
+		var n Name
 		switch a.Kind {
 		case Label:
 			n = a.Text.(Name)
-		case Fold, List:
+		case List:
 			if b.Kind != List {
 				return None, ErrFitType
 			}
@@ -94,15 +85,9 @@ func init() {
 						}
 						x[i] = c.Text.(Name)
 					}
-					if a.Kind == Fold {
-						ans = Token{Macro, &Hong{x, b.Text.([]Token)}}
-						p.env[n] = ans
-						return ans, nil
-					} else {
-						ans = Token{Front, &Lfac{x, b.Text.([]Token), p}}
-						v.env[n] = ans
-						return ans, nil
-					}
+					ans = Token{Front, &Lfac{x, b.Text.([]Token), p}}
+					v.env[n] = ans
+					return ans, nil
 				}
 			}
 		}

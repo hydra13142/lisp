@@ -1,5 +1,10 @@
 package lisp
 
+import (
+	"math/rand"
+	"time"
+)
+
 func Scan(s string) (list []Token, err error) {
 	scanner := pattern.NewScanner(s, true)
 	list = make([]Token, 0, 100)
@@ -85,6 +90,34 @@ func Tree(tkn []Token) ([]Token, error) {
 	return ans, nil
 }
 
+func Collect(c map[Name]bool, t *Token) {
+	switch t.Kind {
+	case List:
+		for _, u := range t.Text.([]Token) {
+			Collect(c, &u)
+		}
+	case Label:
+		c[t.Text.(Name)] = true
+	}
+}
+
+func TmpName() Name {
+	u := [16]byte{'_'}
+	for i := 1; i < 16; i++ {
+		switch x := rand.Uint32() % 63; {
+		case x < 26:
+			u[i] = byte(x + 'A')
+		case x < 52:
+			u[i] = byte(x + 'a' - 26)
+		case x < 62:
+			u[i] = byte(x + '0' - 52)
+		default:
+			u[i] = '_'
+		}
+	}
+	return Name(string(u[:]))
+}
+
 func Repl(tkn Token, lst map[Name]Token) Token {
 	switch tkn.Kind {
 	case List:
@@ -124,7 +157,7 @@ func Hard(tkn Token) Token {
 		for i, t := range l {
 			x[i] = Hard(t)
 		}
-		return Token{Macro, &Hong{m.Para, x}}
+		return Token{Macro, &Hong{m.Para, x, m.Real}}
 	case Front:
 		f := tkn.Text.(*Lfac)
 		l := f.Text
@@ -135,4 +168,8 @@ func Hard(tkn Token) Token {
 		return Token{Front, &Lfac{f.Para, x, f.Make}}
 	}
 	return tkn
+}
+
+func init() {
+	rand.Seed(time.Now().Unix())
 }
