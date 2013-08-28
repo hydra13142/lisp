@@ -2,22 +2,21 @@
 	(maopao l)
 	(each
 		(define
-			(min n m)
+			(min n)
 			(if
 				(atom n)
-				m
-				(if
-					(atom (cdr n))
-					(+ n m)
-					(each
-						(define x (car n))
-						(define y (self (cdr n) m))
-						(define z (car y))
-						(cond
-							((<= x z)
+				()
+				(each
+					(define x (car n))
+					(define y (self (cdr n)))
+					(if
+						(atom y)
+						(cons x ())
+						(each
+							(define z (car y))
+							(if
+								(<= x z)
 								(cons x y)
-							)
-							(1
 								(cons z (cons x (cdr y)))
 							)
 						)
@@ -29,7 +28,7 @@
 			(atom l)
 			()
 			(each
-				(define s (min l ()))
+				(define s (min l))
 				(cons (car s) (self (cdr s)))
 			)
 		)

@@ -136,19 +136,11 @@ func init() {
 		if err != nil {
 			return None, err
 		}
-		if iter.Kind != Front || len(iter.Text.(*Lfac).Para) != 0 {
+		if iter.Kind != List {
 			return None, ErrFitType
 		}
-		g := Token{List, iter.Text.(*Lfac).Text}
 		n := t[0].Text.(Name)
-		q := &Lisp{dad: iter.Text.(*Lfac).Make, env: map[Name]Token{}}
-		q.env[Name("self")] = iter
-		for {
-			a, err := q.Exec(g)
-			if err != nil {
-				break
-			}
-			p.env[n] = a
+		for _, p.env[n] = range iter.Text.([]Token) {
 			_, err = p.Exec(t[2])
 			if err != nil {
 				return None, err
