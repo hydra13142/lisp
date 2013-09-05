@@ -1,10 +1,10 @@
 package lisp
 
-import . "github.com/hydra13142/lisp/parser"
+import "github.com/hydra13142/parser"
 
 func init() {
 	bnd := func(c byte) bool {
-		return c == '(' || c == ')' || IsSpace(c)
+		return c == '(' || c == ')' || parser.IsSpace(c)
 	}
 	pattern.Add(func(s []byte) (interface{}, int) {
 		if len(s) > 0 {
@@ -20,32 +20,55 @@ func init() {
 		return nil, 0
 	})
 	pattern.Add(func(s []byte) (interface{}, int) {
-		a, i := ParseInt(s)
+		a, i := parser.ParseInt(s)
 		if i > 0 {
-			if _, j := ParseFloat(s); i == j && (i >= len(s) || bnd(s[i])) {
+			if _, j := parser.ParseFloat(s); i == j && (i >= len(s) || bnd(s[i])) {
 				return a, i
 			}
 		}
 		return nil, 0
 	})
 	pattern.Add(func(s []byte) (interface{}, int) {
-		a, i := ParseFloat(s)
+		a, i := parser.ParseFloat(s)
 		if i > 0 && (i >= len(s) || bnd(s[i])) {
 			return a, i
 		}
 		return nil, 0
 	})
 	pattern.Add(func(s []byte) (interface{}, int) {
-		a, i := ParseChar(s)
-		if i > 0 && (i >= len(s) || bnd(s[i])) {
-			return int64(a), i
+		if len(s) == 0 {
+			return nil, 0
+		}
+		if s[0] == '\'' {
+			a, i := parser.ParseChar(s[1:])
+			if i > 0 {
+				i += 1
+				if i < len(s) && s[i] == '\'' {
+					i += 1
+					if i >= len(s) || bnd(s[i]) {
+						return int64(a), i
+					}
+				}
+			}
 		}
 		return nil, 0
 	})
 	pattern.Add(func(s []byte) (interface{}, int) {
-		a, i := ParseString(s)
-		if i > 0 && (i >= len(s) || bnd(s[i])) {
-			return a, i
+		i := 1
+		if len(s) == 0 || s[0] != '"' {
+			return nil, 0
+		}
+		for ; i < len(s) && s[i] != '"'; i++ {
+			if s[i] == '\\' {
+				i++
+			}
+		}
+		if i < len(s) {
+			a := string(s[1:i])
+			i += 1
+			if i >= len(s) || bnd(s[i]) {
+				return a, i
+			}
 		}
 		return nil, 0
 	})
