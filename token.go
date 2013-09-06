@@ -57,6 +57,7 @@ func (t *Token) Eq(p *Token) bool {
 		c, d = t.Text.(*Hong).Para, p.Text.(*Hong).Para
 	case Fold, List:
 		a, b = t.Text.([]Token), p.Text.([]Token)
+		c, d = nil, nil
 	}
 	m, n := len(a), len(b)
 	if m != n {
@@ -78,7 +79,7 @@ func (t *Token) Eq(p *Token) bool {
 			}
 		}
 	}
-	return false
+	return true
 }
 
 func (t *Token) Cmp(p *Token) int {
