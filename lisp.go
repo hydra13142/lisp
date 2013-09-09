@@ -156,7 +156,7 @@ func (l *Lisp) Exec(f Token) (ans Token, err error) {
 	return None, nil
 }
 
-func (l *Lisp) Eval(s string) (Token, error) {
+func (l *Lisp) Eval(s []byte) (Token, error) {
 	var (
 		a, b []Token
 		c, d Token
@@ -214,5 +214,5 @@ func (l *Lisp) Load(s string) (Token, error) {
 	if !one.over() {
 		return None, ErrUnquote
 	}
-	return l.Eval(one.total)
+	return l.Eval([]byte(one.total))
 }

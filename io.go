@@ -26,7 +26,7 @@ func init() {
 				break
 			}
 		}
-		return p.Eval(one.total)
+		return p.Eval([]byte(one.total))
 	})
 	Add("load", func(t []Token, p *Lisp) (Token, error) {
 		if len(t) != 1 {

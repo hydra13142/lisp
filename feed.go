@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func Scan(s string) (list []Token, err error) {
+func Scan(s []byte) (list []Token, err error) {
 	scanner := pattern.NewScanner(s, true)
 	list = make([]Token, 0, 100)
 	for {
