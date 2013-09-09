@@ -1,90 +1,132 @@
 (define
-	if
-	(default
-		(macro
-			(a b c)
-			(cond (a b) (1 c))
-		)
-		(none)
-	)
-)
-(define
-	while
+	+=
 	(macro
-		(b c)
-		(each
-			(if
-				b
-				(each
-					c
-					(while b c)
-				)
-				(none)
-			)
-		)
+		(a b)
+		(define a (+ a b))
 	)
 )
 (define
-	until
+	-=
 	(macro
-		(b c)
-		(each
-			(if
-				b
-				(none)
-				(each
-					c
-					(until b c)
-				)
-			)
-		)
+		(a b)
+		(define a (- a b))
 	)
 )
 (define
-	loop
+	*=
 	(macro
-		(a b c)
-		(each
-			a
-			(while b c)
-		)
+		(a b)
+		(define a (* a b))
 	)
 )
 (define
-	for
-	(pretreat
-		(macro
-			(a b c)
-			(until
-				(catch
-					(define a (b))
-				)
-				c
-			)
-		)
-		0
-		1
-		0
-	)
-)
-(define
-	lambda
+	/=
 	(macro
-		(p c)
-		((builtin lambda)
+		(a b)
+		(define a (/ a b))
+	)
+)
+(define
+	%=
+	(macro
+		(a b)
+		(define a (% a b))
+	)
+)
+(define
+	generator
+	(macro
+		(p q)
+		(i o)
+		(define
 			p
 			(each
+				(define i (chan))
+				(define o (chan))
 				(define
-					this
-					((builtin lambda)
-						p
-						c
+					(yield n)
+					(each
+						(o n)
+						(i)
 					)
 				)
-				(eval
+				(define p q)
+				(go
+					(each
+						(i)
+						p
+						(close i)
+						(close o)
+					)
+				)
+				(lambda
+					()
+					(if
+						(catch
+							(each
+								(i 1)
+								(define x (o))
+							)
+						)
+						(raise "nothing to yield")
+						x
+					)
+				)
+			)
+		)
+	)
+)
+(define
+	trace
+	(macro
+		(p q)
+		(define
+			p 
+			(each
+				(print "call (" (car (quote p)))
+				(for
+					i
+					(cdr (quote p))
+					(print " " (eval i))
+				)
+				(println ")")
+				q
+			)
+		)
+	)
+)
+(define
+	rewrite
+	(macro
+		(m f)
+		(l)
+		(eval
+			(cons
+				(quote define)
+				(cons 
+					(car (quote f))
 					(cons
-						(quote this)
-						(quote p)
+						(
+							(lambda
+								()
+								(each
+									(define
+										l
+										(eval (car (quote f)))
+									)
+									(m
+										f
+										(eval
+											(cons
+												l
+												(cdr (quote f))
+											)
+										)
+									)
+								)
+							)
+						)
+						()
 					)
 				)
 			)

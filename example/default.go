@@ -4,7 +4,7 @@ import "github.com/hydra13142/lisp"
 
 func main() {
 	console := lisp.NewLisp()
-	console.Eval(`
+	console.Eval([]byte(`
 		(each
 			(define
 				(f x y z)
@@ -27,5 +27,5 @@ func main() {
 				(F 3 2 1)
 			)
 		)
-	`)
+	`))
 }

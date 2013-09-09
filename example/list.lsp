@@ -1,11 +1,34 @@
 (define
+	list
+	(omission
+		(lambda
+			(l)
+			(quote l)
+		)
+	)
+)
+(define
+	(range i j)
+	(each
+		(loop
+			(define l ())
+			(< i j)
+			(each
+				(define j (- j 1))
+				(define l (cons j l))
+			)
+		)
+		l
+	)
+)
+(define
 	(len l)
 	(if
 		(atom l)
 		0
 		(each
 			(loop
-				(define i 0) # 使用label表示声明一个变量
+				(define i 0)
 				(not (atom l))
 				(each
 					(define l (cdr l))
@@ -19,10 +42,10 @@
 (define
 	(index l i)
 	(if
-		(catch # 捕捉错误并转化为一个字符串数据
+		(catch
 			(each
 				(loop
-					() # 空表不会被执行，返回自身
+					()
 					(!= i 0)
 					(each
 						(define i (- i 1))
@@ -32,8 +55,8 @@
 				(define c (car l))
 			)
 		)
-		(raise "out of range") # 产生错误
-		c # 宏和内置函数的执行不会产生内层环境
+		(raise "out of range")
+		c
 	)
 )
 (define
@@ -49,6 +72,65 @@
 			)
 		)
 		s
+	)
+)
+(define
+	(slice l a b)
+	(if
+		(>= a b)
+		()
+		(if
+			(> a 0)
+			(self
+				(cdr l)
+				(- a 1)
+				(- b 1)
+			)
+			(cons
+				(car l)
+				(self
+					(cdr l)
+					0
+					(- b 1)
+				)
+			)
+		)
+	)
+)
+(define
+	(merge a b)
+	(each
+		(define
+			(cmb a b c)
+			(cond
+				((atom a)
+					(+ (reverse c) b)
+				)
+				((atom b)
+					(+ (reverse c) a)
+				)
+				(1
+					(each
+						(define x (car a))
+						(define y (car b))
+						(if
+							(< x y)
+							(self
+								(cdr a)
+								b
+								(cons x c)
+							)
+							(self
+								a
+								(cdr b)
+								(cons y c)
+							)
+						)
+					)
+				)
+			)
+		)
+		(cmb a b ())
 	)
 )
 (define
@@ -85,20 +167,6 @@
 			)
 		)
 		(reverse s)
-	)
-)
-(define
-	(range i j)
-	(each
-		(loop
-			(define l ())
-			(< i j)
-			(each
-				(define j (- j 1))
-				(define l (cons j l))
-			)
-		)
-		l
 	)
 )
 (quote "ok")

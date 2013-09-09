@@ -1,12 +1,44 @@
+(load "list")
 (define
-	(unlimit n)
+	infinite
+	(default
+		(lambda
+			(n t)
+			(each
+				(define n (- n t))
+				(lambda
+					()
+					(update n (+ n t))
+				)
+			)
+		)
+		0
+		1
+	)
+)
+(define
+	(iterator n f)
+	(lambda
+		()
+		(each
+			(define x n)
+			(update n (f n))
+			x
+		)
+	)
+)
+(define
+	(fbnq)
 	(each
-		(define n (- n 1))
+		(define a 0)
+		(define b 1)
 		(lambda
 			()
-			(update
-				n
-				(+ n 1)
+			(each
+				(define c a)
+				(update a b)
+				(update b (+ a c))
+				a
 			)
 		)
 	)
@@ -29,57 +61,22 @@
 	)
 )
 (define
-	(evary l)
-	(lambda
-		()
-		(if
-			(atom l)
-			(raise "nothing to yield")
+	every
+	(omission
+		(lambda
+			(l)
 			(each
-				(define y (car l))
-				(update l (cdr l))
-				y
-			)
-		)
-	)
-)
-(define
-	generator
-	(macro
-		(p q) # 输入的参数
-		(i o) # 表示额外的替换对象，将替换为随机不重名label
-		(define
-			p
-			(each
-				(define i (chan))
-				(define o (chan))
-				(define
-					(yield n)
-					(each
-						(o n)
-						(i)
-					)
-				)
-				(define p q)
-				(go
-					(each
-						(i)
-						p
-						(close i)
-						(close o)
-					)
-				)
+				(define l (plain l))
 				(lambda
 					()
 					(if
-						(catch
-							(each
-								(i 1)
-								(define x (o))
-							)
-						)
+						(atom l)
 						(raise "nothing to yield")
-						x
+						(each
+							(define y (car l))
+							(update l (cdr l))
+							y
+						)
 					)
 				)
 			)

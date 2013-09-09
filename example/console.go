@@ -13,14 +13,14 @@ func main() {
 	l := len(os.Args) - 1
 	if l > 0 {
 		for _, f := range os.Args[1:l] {
-			env.Eval(`(load "` + f + `")`)
+			env.Eval([]byte(`(load "` + f + `")`))
 		}
 		if os.Args[l] != "-" {
-			env.Eval(`(println (load "` + os.Args[l] + `"))`)
+			env.Eval([]byte(`(println (load "` + os.Args[l] + `"))`))
 			return
 		}
 	}
-	env.Eval(`
+	env.Eval([]byte(`
 	(loop
 		()
 		1
@@ -32,7 +32,7 @@ func main() {
 				)
 			)
 		)
-	)`)
+	)`))
 }
 func init() {
 
