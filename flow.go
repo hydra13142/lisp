@@ -140,7 +140,8 @@ func init() {
 			return None, ErrFitType
 		}
 		n := t[0].Text.(Name)
-		for _, p.env[n] = range iter.Text.([]Token) {
+		for _, m := range iter.Text.([]Token) {
+			p.env[n] = m
 			_, err = p.Exec(t[2])
 			if err != nil {
 				return None, err
