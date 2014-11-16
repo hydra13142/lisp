@@ -3,7 +3,7 @@ package lisp
 import (
 	"errors"
 	"fmt"
-	"github.com/hydra13142/parser"
+	"./parser"
 )
 
 type Kind int
